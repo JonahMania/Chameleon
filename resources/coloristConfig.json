@@ -1,0 +1,17 @@
+{
+    "colorKeys":[
+        "#9badb7",
+        "#847e87",
+        "#696a6a",
+        "#3f3f74",
+        {
+            "red":255,
+            "green":255,
+            "blue":255
+        }
+    ],
+    "templates":"#FF00FF",
+    "palettes":{
+        "testPalette":"palettes/test.json"
+    }
+}
