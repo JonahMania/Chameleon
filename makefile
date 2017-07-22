@@ -8,8 +8,10 @@ SRC = src/main.cpp\
 	src/template/Template.hpp\
 	src/configParser/configParser.cpp\
 	src/configParser/configParser.hpp\
-	src/lib/json.hpp	
-	
+	src/utils/pixelAccess.cpp\
+	src/utils/pixelAccess.hpp\
+	src/lib/json.hpp
+
 OBJ = $(SRC:.cpp=.o)
 RM = rm -f
 CXXFLAGS= -g -std=c++11

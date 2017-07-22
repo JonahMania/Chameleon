@@ -30,7 +30,7 @@ bool Palette::generatePalette(std::vector<SDL_Color> colorKeys)
     colorMap.clear();
     for(SDL_Color colorKey : colorKeys)
     {
-        colorMap.insert(std::pair<SDL_Color,SDL_Color>(colorKey,SDL_Color({r:255,g:255,b:255})));    
+        colorMap.insert(std::pair<SDL_Color,SDL_Color>(colorKey,SDL_Color({r:255,g:255,b:255})));
     }
     return true;
 }

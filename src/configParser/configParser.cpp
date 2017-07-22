@@ -6,11 +6,11 @@ SDL_Color getColor(json j)
 {
     SDL_Color ret;
     if(j.is_string() && j.get<std::string>().size() == 7 && j.get<std::string>()[0] == '#')
-    {  
+    {
         std::string color = j.get<std::string>();
-        ret.r = std::stoi(color.substr(1,2), NULL, 16); 
-        ret.g = std::stoi(color.substr(3,5), NULL, 16); 
-        ret.b = std::stoi(color.substr(5,7), NULL, 16); 
+        ret.r = std::stoi(color.substr(1,2), NULL, 16);
+        ret.g = std::stoi(color.substr(3,2), NULL, 16);
+        ret.b = std::stoi(color.substr(5,2), NULL, 16);
     }
     else if(j.is_object() && j["red"].is_number() && j["green"].is_number() && j["blue"].is_number())
     {
@@ -35,8 +35,8 @@ Palette *getPaletteFromConfig(std::string configPath)
     json j;
     Uint8 red;
     Uint8 green;
-    Uint8 blue;   
-    //Get all data from json before creating new object 
+    Uint8 blue;
+    //Get all data from json before creating new object
     jsonStream = std::ifstream(configPath, std::ifstream::in);
     if(!jsonStream)
     {
@@ -65,9 +65,9 @@ Palette *getPaletteFromConfig(std::string configPath)
     }else{
         std::cerr<<"Error: Palette file '"<<configPath<<"' is missing key 'blue'"<<std::endl;
         return NULL;
-    } 
+    }
 
-    return new Palette(red, green, blue); 
+    return new Palette(red, green, blue);
 }
 
 
@@ -76,7 +76,7 @@ Colorist *getColoristFromConfig(std::string configPath)
     std::ifstream jsonStream;
     json j;
     Colorist *colorist;
-    //Get all data from json before creating new object 
+    //Get all data from json before creating new object
     jsonStream = std::ifstream(configPath, std::ifstream::in);
     if(!jsonStream)
     {
@@ -92,7 +92,7 @@ Colorist *getColoristFromConfig(std::string configPath)
         for(json::iterator it = array.begin(); it < array.end(); it++ )
         {
             colorist->pushColorKey(getColor(*it));
-        } 
+        }
     }
-    return colorist;    
+    return colorist;
 }

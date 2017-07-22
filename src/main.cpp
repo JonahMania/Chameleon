@@ -104,7 +104,7 @@ int main()
                  if( event.type == SDL_QUIT )
                  {
                      quit = true;
-                    break;
+                     break;
                  }
 
                 //Render Background as black
@@ -117,9 +117,8 @@ int main()
          }
      }
 
-    close();
     delete test;
     delete c;
     t.close();
-    
+    close();
 }

@@ -8,9 +8,10 @@
 
 #include "Palette.hpp"
 #include "../template/Template.hpp"
+#include "../utils/pixelAccess.hpp"
 
 //Class used to color pixel art templates
-class Colorist 
+class Colorist
 {
     public:
         Colorist();

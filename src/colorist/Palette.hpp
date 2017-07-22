@@ -9,7 +9,7 @@
 //Compare operator for SDL_Color so that std::map will work
 bool operator<(const SDL_Color& a, const SDL_Color& b);
 
-class Palette 
+class Palette
 {
     public:
         Palette();
@@ -22,4 +22,4 @@ class Palette
 
 };
 
-#endif 
+#endif
