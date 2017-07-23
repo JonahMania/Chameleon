@@ -3,9 +3,9 @@
 #include <SDL2/SDL_image.h>
 #include <cmath> //pow
 
-#include "configParser/configParser.hpp"
-#include "colorist/Colorist.hpp"
-#include "template/Template.hpp"
+#include "configParser.hpp"
+#include "lib/engine/Colorist.hpp"
+#include "lib/engine/Template.hpp"
 
 const int screenWidth = 1024; //Width of the game window
 const int screenHeight = 768; //Height of the game window

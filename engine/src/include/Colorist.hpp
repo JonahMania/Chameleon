@@ -6,10 +6,6 @@
 #include <SDL2/SDL.h>
 #include <string>
 
-#include "Palette.hpp"
-#include "../template/Template.hpp"
-#include "../utils/pixelAccess.hpp"
-
 //Class used to color pixel art templates
 class Colorist
 {

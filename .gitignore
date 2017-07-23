@@ -1,2 +1,7 @@
 *.o
-colorGen
+engine/engine.a
+engine/obj/
+engine/engine/
+samples/configParser/obj/
+samples/configParser/configParser
+samples/configParser/src/lib/engine/

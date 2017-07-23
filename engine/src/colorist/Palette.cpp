@@ -1,4 +1,4 @@
-#include "Palette.hpp"
+#include "../include/Palette.hpp"
 
 //Compare operator for SDL_Color so that std::map will work
 bool operator<(const SDL_Color& a, const SDL_Color& b)

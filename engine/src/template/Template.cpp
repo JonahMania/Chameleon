@@ -1,4 +1,4 @@
-#include "Template.hpp"
+#include "../include/Template.hpp"
 
 Template::Template(std::string path)
 {
