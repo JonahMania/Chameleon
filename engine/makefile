@@ -41,3 +41,6 @@ copy:
 clean:
 	$(RM) $(BUILDDIR)
 	$(RM) $(basename $(TARGET))
+
+#remake
+remake: clean $(basename $(TARGET))/$(TARGET) copy

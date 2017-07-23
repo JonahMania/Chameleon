@@ -4,8 +4,7 @@
 #include <cmath> //pow
 
 #include "configParser.hpp"
-#include "lib/engine/Colorist.hpp"
-#include "lib/engine/Template.hpp"
+#include "lib/engine/engine.hpp"
 
 const int screenWidth = 1024; //Width of the game window
 const int screenHeight = 768; //Height of the game window
