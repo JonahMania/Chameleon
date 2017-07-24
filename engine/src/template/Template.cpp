@@ -57,6 +57,39 @@ bool Template::addFragment(Fragment fragment, int x, int y)
     return true;
 }
 
+bool Template::scaleTemplate(unsigned int scale)
+{
+    SDL_Rect dest;
+    SDL_Surface *temp;
+
+    if(templateSurface == NULL || scale < 2)
+    {
+        return false;
+    }
+
+    temp = SDL_CreateRGBSurface(0, templateSurface->w * scale,  templateSurface->h * scale, 32, 0, 0, 0, 0);
+    if(temp == NULL)
+    {
+        std::cerr<<"Error: Could not create new surface "<<SDL_GetError()<<std::endl;
+        return false;
+    }
+    //Set the destination location and size
+    dest.x = 0;
+    dest.y = 0;
+    dest.w = templateSurface->w * scale;
+    dest.h = templateSurface->h * scale;
+    //Blit the fragment to the template surface
+    if(SDL_BlitScaled(templateSurface, NULL, temp, &dest))
+    {
+        std::cerr<<"Error: Could not blit fragment to new surface "<<SDL_GetError()<<std::endl;
+        return false;
+    }
+
+    SDL_FreeSurface(templateSurface);
+    templateSurface = temp;
+
+}
+
 SDL_Surface *Template::getSurface()
 {
     return templateSurface;

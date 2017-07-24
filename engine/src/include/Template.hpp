@@ -12,6 +12,7 @@ class Template
         Template(unsigned int w, unsigned int h);
         Template(Fragment fragment);
         bool addFragment(Fragment fragment, int x, int y);
+        bool scaleTemplate(unsigned int scale);
         SDL_Surface *getSurface();
         void close();
     private:

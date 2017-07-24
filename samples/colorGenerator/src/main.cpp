@@ -102,6 +102,7 @@ int main()
     testColorist.addPalette("testPalette", &testPalette);
     testTemplate.addFragment(testFragment, 0, 0);
 
+    testTemplate.scaleTemplate(3);
     SDL_Surface *testSurface = testTemplate.getSurface();
     testColorist.paintSurface("testPalette", testSurface);
 
