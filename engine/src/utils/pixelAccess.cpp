@@ -33,35 +33,30 @@ SDL_Color getPixel(SDL_Surface *surface, int i)
             ret.b = (Uint8)pixel[2];
             ret.a = 0;
             return ret;
-            break;
-
         case 4:
-            std::cerr<<"Error: 32 bit pixel format not implemented"<<std::endl;
-            // temp = *pixel & surface->format->Rmask;
-            // temp = temp >> surface->format->Rshift;
-            // temp = temp << surface->format->Rloss;
-            // ret.r = (Uint8)temp;
-            // temp = *pixel & surface->format->Gmask;
-            // temp = temp >> surface->format->Gshift;
-            // temp = temp << surface->format->Gloss;
-            // ret.g = (Uint8)temp;
-            // temp = *pixel & surface->format->Bmask;
-            // temp = temp >> surface->format->Bshift;
-            // temp = temp << surface->format->Bloss;
-            // ret.b = (Uint8)temp;
-            // temp = *pixel & surface->format->Amask;
-            // temp = temp >> surface->format->Ashift;
-            // temp = temp << surface->format->Aloss;
-            // ret.a = (Uint8)temp;
-            //
-            // return ret;
-            break;
+            temp = *(Uint32*)pixel & surface->format->Rmask;
+            temp = temp >> surface->format->Rshift;
+            temp = temp << surface->format->Rloss;
+            ret.r = (Uint8)temp;
+            temp = *(Uint32*)pixel & surface->format->Gmask;
+            temp = temp >> surface->format->Gshift;
+            temp = temp << surface->format->Gloss;
+            ret.g = (Uint8)temp;
+            temp = *(Uint32*)pixel & surface->format->Bmask;
+            temp = temp >> surface->format->Bshift;
+            temp = temp << surface->format->Bloss;
+            ret.b = (Uint8)temp;
+            temp = *(Uint32*)pixel & surface->format->Amask;
+            temp = temp >> surface->format->Ashift;
+            temp = temp << surface->format->Aloss;
+            ret.a = (Uint8)temp;
+
+            return ret;
         default:
             std::cerr<<"Error: Unrecognized pixel format"<<std::endl;
             break;
 
         return SDL_Color({r:0,g:0,b:0,a:0});
-
     }
 }
 
@@ -77,24 +72,7 @@ void setPixel(SDL_Surface *surface, int i, SDL_Color color)
     }
     //Current pixel
     Uint8 *pixel = (Uint8 *)surface->pixels + i * bytesPerPixel;
-
-    switch(bytesPerPixel)
-    {
-        case 1:
-            std::cerr<<"Error: 8 bit pixel format not implemented"<<std::endl;
-            break;
-        case 2:
-            std::cerr<<"Error: 16 bit pixel format not implemented"<<std::endl;
-            break;
-        case 3:
-            pixel[0] = color.r;
-            pixel[1] = color.g;
-            pixel[2] = color.b;
-            break;
-        case 4:
-            std::cerr<<"Error: 32 bit pixel format not implemented"<<std::endl;
-            break;
-    }
+    *(Uint32*)pixel = SDL_MapRGBA(surface->format, color.r ,color.g ,color.b, color.a);
 
     SDL_UnlockSurface(surface);
 

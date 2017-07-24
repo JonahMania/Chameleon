@@ -1,5 +1,4 @@
 #include "../include/Palette.hpp"
-#include "../include/Template.hpp"
 #include "../utils/pixelAccess.hpp"
 #include "../include/Colorist.hpp"
 

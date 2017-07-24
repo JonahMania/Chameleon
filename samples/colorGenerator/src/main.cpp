@@ -76,6 +76,29 @@ int main()
     Fragment testFragment = Fragment("resources/fragments/testFragment.png");
     Template testTemplate = Template(16, 16);
 
+    //Add the color key for our fragment
+    SDL_Color colorKey;
+    colorKey.r = 155;
+    colorKey.g = 173;
+    colorKey.b = 183;
+    testColorist.pushColorKey(colorKey);
+    colorKey.r = 132;
+    colorKey.g = 126;
+    colorKey.b = 135;
+    testColorist.pushColorKey(colorKey);
+    colorKey.r = 105;
+    colorKey.g = 106;
+    colorKey.b = 106;
+    testColorist.pushColorKey(colorKey);
+    colorKey.r = 63;
+    colorKey.g = 63;
+    colorKey.b = 116;
+    testColorist.pushColorKey(colorKey);
+    colorKey.r = 34;
+    colorKey.g = 32;
+    colorKey.b = 52;
+    testColorist.pushColorKey(colorKey);
+
     testColorist.addPalette("testPalette", &testPalette);
     testTemplate.addFragment(testFragment, 0, 0);
 
