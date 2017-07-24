@@ -9,7 +9,9 @@
 class Template
 {
     public:
-        Template(std::string path);
+        Template(unsigned int w, unsigned int h);
+        Template(Fragment fragment);
+        bool addFragment(Fragment fragment, int x, int y);
         SDL_Surface *getSurface();
         void close();
     private:

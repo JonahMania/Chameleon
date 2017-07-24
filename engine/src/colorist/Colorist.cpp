@@ -17,6 +17,7 @@ bool Colorist::addPalette(std::string name, Palette* p)
 
     if(palettes.find(name) != palettes.end())
     {
+        std::cerr<<"Error: Palette with name '"<<name<<"' already exists"<<std::endl;
         return false;
     }
 

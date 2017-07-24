@@ -5,3 +5,6 @@ engine/engine/
 samples/configParser/obj/
 samples/configParser/configParser
 samples/configParser/src/lib/engine/
+samples/colorGenerator/obj/
+samples/colorGenerator/colorGenerator
+samples/colorGenerator/src/lib/engine/
