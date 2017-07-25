@@ -72,6 +72,13 @@ int main()
     }
 
     Palette testPalette = Palette();
+    testPalette.setBaseColor(SDL_Color({r:200,g:100,b:10}));
+    testPalette.setHighlightColor(SDL_Color({r:250,g:250,b:250}));
+    testPalette.setAmbientColor(SDL_Color({r:10,g:0,b:200}));
+    testPalette.setReflectivity(0);
+    testPalette.setIllumination(1);
+    testPalette.setHighlightMultiplyer(1);
+
     Colorist testColorist = Colorist();
     Fragment testFragment = Fragment("resources/fragments/testFragment.png");
     Template testTemplate = Template(16, 16);
@@ -102,7 +109,7 @@ int main()
     testColorist.addPalette("testPalette", &testPalette);
     testTemplate.addFragment(testFragment, 0, 0);
 
-    testTemplate.scaleTemplate(3);
+    testTemplate.scaleTemplate(4);
     SDL_Surface *testSurface = testTemplate.getSurface();
     testColorist.paintSurface("testPalette", testSurface);
 
