@@ -3,6 +3,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "lib/engine/engine.hpp"
+#include "colors/colors.hpp"
 
 const int screenWidth = 1024; //Width of the game window
 const int screenHeight = 768; //Height of the game window
@@ -23,34 +24,25 @@ bool initialize()
         std::cerr << "ERROR: SDL could not initialize " << SDL_GetError() << std::endl;
         return false;
     }
-    else
+    //Create window
+    window = SDL_CreateWindow( "colorGen", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
+    if( window == NULL )
     {
-        //Create window
-        window = SDL_CreateWindow( "colorGen", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth, screenHeight, SDL_WINDOW_SHOWN );
-        if( window == NULL )
-        {
-            std::cerr << "ERROR: Window was not created " << SDL_GetError() << std::endl;
-            return false;
-        }
-        else
-        {
-            //Create rendering context for window
-            windowRenderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_PRESENTVSYNC );
-            if( windowRenderer == NULL )
-            {
-                std::cerr << "ERROR: renderer cound not be created " << SDL_GetError() << std::endl;
-                return false;
-            }
-            else
-            {
-                //Initilize PNG loading
-                if( !( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) )
-                {
-                    std::cerr << "ERROR: PNG loading was not initilized " << IMG_GetError() << std::endl;
-                    return false;
-                }
-            }
-        }
+        std::cerr << "ERROR: Window was not created " << SDL_GetError() << std::endl;
+        return false;
+    }
+    //Create rendering context for window
+    windowRenderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_PRESENTVSYNC );
+    if( windowRenderer == NULL )
+    {
+        std::cerr << "ERROR: renderer cound not be created " << SDL_GetError() << std::endl;
+        return false;
+    }
+    //Initilize PNG loading
+    if( !( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) )
+    {
+        std::cerr << "ERROR: PNG loading was not initilized " << IMG_GetError() << std::endl;
+        return false;
     }
     return true;
 }
@@ -71,54 +63,29 @@ int main()
         return -1;
     }
 
-    Palette testPalette = Palette();
-    testPalette.setBaseColor(SDL_Color({r:200,g:100,b:10}));
-    testPalette.setHighlightColor(SDL_Color({r:250,g:250,b:250}));
-    testPalette.setAmbientColor(SDL_Color({r:10,g:0,b:200}));
-    testPalette.setReflectivity(0);
-    testPalette.setIllumination(1);
-    testPalette.setHighlightMultiplyer(1);
+    Colorist testColorist = getColorist();
+    Fragment testFragment = Fragment("resources/fragments/cube.png");
+    Template testTemplate = Template(32, 32);
 
-    Colorist testColorist = Colorist();
-    Fragment testFragment = Fragment("resources/fragments/testFragment.png");
-    Template testTemplate = Template(16, 16);
-
-    //Add the color key for our fragment
-    SDL_Color colorKey;
-    colorKey.r = 155;
-    colorKey.g = 173;
-    colorKey.b = 183;
-    testColorist.pushColorKey(colorKey);
-    colorKey.r = 132;
-    colorKey.g = 126;
-    colorKey.b = 135;
-    testColorist.pushColorKey(colorKey);
-    colorKey.r = 105;
-    colorKey.g = 106;
-    colorKey.b = 106;
-    testColorist.pushColorKey(colorKey);
-    colorKey.r = 63;
-    colorKey.g = 63;
-    colorKey.b = 116;
-    testColorist.pushColorKey(colorKey);
-    colorKey.r = 34;
-    colorKey.g = 32;
-    colorKey.b = 52;
-    testColorist.pushColorKey(colorKey);
-
-    testColorist.addPalette("testPalette", &testPalette);
+    // testColorist.addPalette("testPalette", &testPalette);
     testTemplate.addFragment(testFragment, 0, 0);
 
-    testTemplate.scaleTemplate(4);
+    testTemplate.scaleTemplate(3);
     SDL_Surface *testSurface = testTemplate.getSurface();
-    testColorist.paintSurface("testPalette", testSurface);
-
+    SDL_Surface *sampleSurface = testColorist.createSample(testSurface, screenWidth, screenHeight);
+    SDL_SetColorKey( sampleSurface, SDL_TRUE, SDL_MapRGB( sampleSurface->format, 0xFF, 0, 0xFF ) );
     SDL_Rect bounds;
-    SDL_Texture *testTexture = SDL_CreateTextureFromSurface( windowRenderer, testSurface );
+    SDL_Texture *testTexture = SDL_CreateTextureFromSurface( windowRenderer, sampleSurface );
     bounds.x = 0;
     bounds.y = 0;
-    bounds.w = testSurface->w;
-    bounds.h = testSurface->h;
+    bounds.w = sampleSurface->w;
+    bounds.h = sampleSurface->h;
+
+    SDL_Rect dest;
+    dest.x = 0;
+    dest.y = 0;
+    dest.w = sampleSurface->w;
+    dest.h = sampleSurface->h;
 
     while( !quit )
     {
@@ -127,19 +94,20 @@ int main()
             //If the user has quit the program close correctly
             if( event.type == SDL_QUIT )
             {
-            quit = true;
-            break;
+                quit = true;
+                break;
             }
 
             //Render Background as black
-            SDL_SetRenderDrawColor( windowRenderer, 0, 0, 0, 0xFF );
+            SDL_SetRenderDrawColor( windowRenderer, 100, 100, 100, 0xFF );
             SDL_RenderClear( windowRenderer );
-            SDL_RenderCopy( windowRenderer, testTexture, &bounds, &bounds );
+            SDL_RenderCopy( windowRenderer, testTexture, &bounds, &dest );
             //Update screen
             SDL_RenderPresent( windowRenderer );
         }
     }
 
+    SDL_FreeSurface(sampleSurface);
     testFragment.close();
     testTemplate.close();
     close();

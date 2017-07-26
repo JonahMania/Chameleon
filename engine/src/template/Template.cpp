@@ -95,6 +95,11 @@ SDL_Surface *Template::getSurface()
     return templateSurface;
 }
 
+SDL_Surface *Template::createSample()
+{
+    return NULL;
+}
+
 void Template::close()
 {
     if(templateSurface != NULL)
