@@ -1,6 +1,5 @@
 #include <algorithm>
 
-#include "../utils/colorNormal.hpp"
 #include "../utils/colorUtils.hpp"
 #include "../include/Palette.hpp"
 
@@ -18,64 +17,139 @@ struct luminanceSort
     }
 };
 
+/*************************************
+*    |                               *
+* 180 - - - - - - - - - - - -        *
+*    |                               *
+* 100 - - - - - - -X- <------- diff  *
+*    |                               *
+*    |          X                    *
+*    |      X                        *
+*  0 | X______________________       *
+*      0   1    2   3  <------- i    *
+*                                    *
+*             y = mx^p               *
+*************************************/
+unsigned int getColor(unsigned int baseColor, unsigned int ambientColor, double reflectiveness, unsigned int i, unsigned int numColors)
+{
+    unsigned int diffA = abs((int)ambientColor - (int)baseColor);
+    unsigned int diffB = std::min(baseColor, ambientColor) + (360 - std::max(baseColor, ambientColor));
+    unsigned int diff = std::min(diffA, diffB);
+    //Value to adjust how step of a curve we want range 0 - 2
+    const double p = (1 - reflectiveness) * 2;
+
+    //Solve for m
+    double m = diff / std::pow((double)numColors, p);
+    int newColor;
+
+    if(diffA < diffB || baseColor > 360 / 2)
+    {
+        newColor = round((double)baseColor + (m * std::pow((double)i, p)));
+    }else{
+        newColor = round((double)baseColor - (m * std::pow((double)i, p)));
+    }
+
+    if(newColor > 360)
+    {
+        newColor -= 360;
+    }
+
+    if(newColor < 0)
+    {
+        newColor = 360 - abs(newColor);
+    }
+
+    return newColor;
+}
+
+/*************************************
+*    |                               *
+*  1 - - - - - - - - - X - - -       *
+*    |                               *
+*    |              X                *
+*    |                               *
+*    |          X                    *
+*    |      X                        *
+*  0 | X______________________       *
+*      0    1   2   3   4  <----- i  *
+*                                    *
+*             y = mx^p               *
+*************************************/
+double getOffset(double p, double upperBound, unsigned int i, unsigned int numColors)
+{
+    //Solve for m
+    double m = upperBound / std::pow((double)numColors - 1, p);
+    return m * std::pow((double)i, p);
+}
+
 Palette::Palette()
 {
-    baseColor.r = 255;
-    baseColor.g = 255;
-    baseColor.b = 255;
-
-    highlightColor.r = 255;
-    highlightColor.g = 255;
-    highlightColor.b = 255;
-
-    ambientColor.r = 255;
-    ambientColor.g = 255;
-    ambientColor.b = 255;
-
-    reflectivity = 0;
-    illumination = 1;
-    highlightMultiplyer = 1;
+    hue = 0;
+    ambientColor = 0;
+    saturation = 0;
+    reflectiveness = 0.5;
+    brightness = 0.5;
 }
 
-void Palette::setBaseColor(SDL_Color color)
+void Palette::setHue(unsigned int h)
 {
-    baseColor = color;
+    if(h > 360)
+    {
+        hue = 360;
+    }else{
+        hue = h;
+    }
 }
 
-void Palette::setHighlightColor(SDL_Color color)
+void Palette::setAmbientColor(unsigned int ac)
 {
-    highlightColor = color;
+    if(ac > 360)
+    {
+        ambientColor = 360;
+    }else{
+        ambientColor = ac;
+    }
 }
 
-void Palette::setAmbientColor(SDL_Color color)
+void Palette::setSaturation(double s)
 {
-    ambientColor = color;
+    if(s > 1)
+    {
+        saturation = 1;
+    }else{
+        saturation = s;
+    }
 }
 
-void Palette::setReflectivity(double r)
+void Palette::setReflectiveness(double r)
 {
-    reflectivity = r;
+    if(r < 0)
+    {
+        reflectiveness = 0;
+    }else if(r > 1){
+        reflectiveness = 1;
+    }else{
+        reflectiveness = r;
+    }
 }
 
-void Palette::setIllumination(double i)
+void Palette::setBrightness(double b)
 {
-    illumination = i;
-}
-
-void Palette::setHighlightMultiplyer(double hm)
-{
-    highlightMultiplyer = hm;
+    if(b > 1)
+    {
+        brightness = 1;
+    }else if(b < 0){
+        brightness = 0;
+    }else{
+        brightness = b;
+    }
 }
 
 bool Palette::generatePalette(std::vector<SDL_Color> colorKeys)
 {
     unsigned int numColors = colorKeys.size();
     std::vector<SDL_Color> newPalette;
-
-    ColorNormal highlightColorNorm = ColorNormal(highlightColor);
-    double weight;
-    ColorNormal light;
-    ColorNormal currColor;
+    unsigned int newColor;
 
     if(numColors <= 0)
     {
@@ -83,24 +157,15 @@ bool Palette::generatePalette(std::vector<SDL_Color> colorKeys)
     }
     colorMap.clear();
 
-    for(int i = 0; i < numColors; i++)
+    for(unsigned int i = 0; i < numColors; i++)
     {
-        //Create a normilized weight for each color in palette
-        weight = pow(i / (double)(numColors - 1), illumination);
-        //Calculate highlightColor considering the highlight multiplyer
-        highlightColorNorm = highlightColorNorm * highlightMultiplyer;
-        //Create lighting color
-        ColorNormal light = (ColorNormal(ambientColor) * weight) + (highlightColorNorm * (1 - weight));
-        //Offset base color by lighting
-        currColor = ColorNormal(baseColor) * light;
-        //Apply reflectivity
-        currColor = (light * reflectivity) + (currColor * (1 - reflectivity));
-        newPalette.push_back(currColor.toSDL_Color());
+        newColor = getColor(hue, ambientColor, reflectiveness, i, numColors);
+        newPalette.push_back(hsvToRgb(HSV(newColor, getOffset(1 - saturation, 1, i, numColors), getOffset(1 - brightness, brightness * 2, i, numColors))));
     }
 
-    //Sort both sets of colors by brightness before creating map
+    //Sort colr keys by brightness before creating map
     std::sort(colorKeys.begin(), colorKeys.end(), luminanceSort());
-    std::sort(newPalette.begin(), newPalette.end(), luminanceSort());
+
     //Create mapping
     for(int i = 0; i < numColors; i++)
     {
