@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "lib/engine/engine.hpp"
-#include "colors/colors.hpp"
+#include "tiles/SimpleTile.hpp"
 
 const int screenWidth = 1024; //Width of the game window
 const int screenHeight = 768; //Height of the game window
@@ -63,29 +63,7 @@ int main()
         return -1;
     }
 
-    Colorist testColorist = getColorist();
-    Fragment testFragment = Fragment("resources/fragments/cube.png");
-    Template testTemplate = Template(32, 32);
-
-    // testColorist.addPalette("testPalette", &testPalette);
-    testTemplate.addFragment(testFragment, 0, 0);
-
-    testTemplate.scaleTemplate(3);
-    SDL_Surface *testSurface = testTemplate.getSurface();
-    SDL_Surface *sampleSurface = testColorist.createSample(testSurface, screenWidth, screenHeight);
-    SDL_SetColorKey( sampleSurface, SDL_TRUE, SDL_MapRGB( sampleSurface->format, 0xFF, 0, 0xFF ) );
-    SDL_Rect bounds;
-    SDL_Texture *testTexture = SDL_CreateTextureFromSurface( windowRenderer, sampleSurface );
-    bounds.x = 0;
-    bounds.y = 0;
-    bounds.w = sampleSurface->w;
-    bounds.h = sampleSurface->h;
-
-    SDL_Rect dest;
-    dest.x = 0;
-    dest.y = 0;
-    dest.w = sampleSurface->w;
-    dest.h = sampleSurface->h;
+    SimpleTile tile = SimpleTile(windowRenderer);
 
     while( !quit )
     {
@@ -96,20 +74,26 @@ int main()
             {
                 quit = true;
                 break;
+            }else if(event.type == SDL_KEYDOWN){
+                 switch(event.key.keysym.sym)
+                 {
+                     case SDLK_q:
+                        tile.switchColor();
+                        break;
+                    default:
+                        break;
+                 }
             }
 
             //Render Background as black
             SDL_SetRenderDrawColor( windowRenderer, 100, 100, 100, 0xFF );
             SDL_RenderClear( windowRenderer );
-            SDL_RenderCopy( windowRenderer, testTexture, &bounds, &dest );
+            tile.render(windowRenderer);
             //Update screen
             SDL_RenderPresent( windowRenderer );
         }
     }
 
-    SDL_DestroyTexture(testTexture);
-    SDL_FreeSurface(sampleSurface);
-    testFragment.close();
-    testTemplate.close();
+    tile.close();
     close();
 }

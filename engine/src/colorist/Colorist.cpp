@@ -1,4 +1,3 @@
-#include "../include/Palette.hpp"
 #include "../utils/pixelAccess.hpp"
 #include "../include/Colorist.hpp"
 
@@ -60,6 +59,42 @@ bool Colorist::pushColorKey(SDL_Color color)
     //Make sure alpha is set to 0
     color.a = 0;
     colorKeys.push_back(color);
+}
+
+SDL_Texture *Colorist::createTexture(Template temp, std::string paletteName, SDL_Renderer* renderer)
+{
+    SDL_Texture *ret;
+    SDL_Surface *surface = temp.getSurface();
+    //Create temp surface to paint
+    SDL_Surface *tempSurface = SDL_CreateRGBSurface(0, surface->w, surface->h, 32, 0, 0, 0, 0);
+    if(tempSurface == NULL)
+    {
+        std::cerr<<"Error: Could not create new surface "<<SDL_GetError()<<std::endl;
+        return NULL;
+    }
+    //Fill for color key
+    if(SDL_FillRect(tempSurface, NULL, SDL_MapRGB(tempSurface->format, 255, 0, 255)))
+    {
+        std::cerr<<"Error: Could not fill surface "<<SDL_GetError()<<std::endl;
+    }
+    SDL_SetColorKey( tempSurface, SDL_TRUE, SDL_MapRGB( tempSurface->format, 0xFF, 0, 0xFF ) );
+    //Copy original surface to new surface
+    if(SDL_BlitSurface(surface, NULL, tempSurface, NULL))
+    {
+        std::cerr<<"Error: Could not blit surface "<<SDL_GetError()<<std::endl;
+        SDL_FreeSurface(tempSurface);
+        return NULL;
+    }
+    //Paint new surface
+    if(!paintSurface(paletteName, tempSurface))
+    {
+        SDL_FreeSurface(tempSurface);
+        return NULL;
+    }
+    //Create texture
+    ret = SDL_CreateTextureFromSurface(renderer, tempSurface);
+    SDL_FreeSurface(tempSurface);
+    return ret;
 }
 
 SDL_Surface *Colorist::createSample(SDL_Surface *surface, unsigned int w, unsigned int h)

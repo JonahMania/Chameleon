@@ -5,5 +5,8 @@
 #include "Template.hpp"
 #include "Palette.hpp"
 #include "Colorist.hpp"
+#include "Entity.hpp"
+#include "Renderable.hpp"
+#include "Object.hpp"
 
 #endif

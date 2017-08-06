@@ -8,3 +8,6 @@ samples/configParser/src/lib/engine/
 samples/colorGenerator/obj/
 samples/colorGenerator/colorGenerator
 samples/colorGenerator/src/lib/engine/
+samples/tileMapper/obj/
+samples/tileMapper/tileMapper
+samples/tileMapper/src/lib/engine/

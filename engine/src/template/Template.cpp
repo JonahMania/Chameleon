@@ -1,4 +1,3 @@
-#include "../include/Fragment.hpp"
 #include "../include/Template.hpp"
 
 Template::Template(unsigned int w, unsigned int h)
@@ -93,11 +92,6 @@ bool Template::scaleTemplate(unsigned int scale)
 SDL_Surface *Template::getSurface()
 {
     return templateSurface;
-}
-
-SDL_Surface *Template::createSample()
-{
-    return NULL;
 }
 
 void Template::close()

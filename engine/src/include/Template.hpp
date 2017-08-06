@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 
+#include "Fragment.hpp"
+
 class Template
 {
     public:
@@ -14,7 +16,6 @@ class Template
         bool addFragment(Fragment fragment, int x, int y);
         bool scaleTemplate(unsigned int scale);
         SDL_Surface *getSurface();
-        SDL_Surface *createSample();
         void close();
     private:
         SDL_Surface *templateSurface;
