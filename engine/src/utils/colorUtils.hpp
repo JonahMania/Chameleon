@@ -62,5 +62,7 @@ struct HSV
 double luminance(SDL_Color color);
 SDL_Color hsvToRgb(HSV color);
 HSV rgbToHsv(SDL_Color color);
+unsigned int getColor(unsigned int baseColor, unsigned int ambientColor, double reflectiveness, unsigned int i, unsigned int numColors);
+double getOffset(double p, double upperBound, unsigned int i, unsigned int numColors);
 
 #endif

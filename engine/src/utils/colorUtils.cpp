@@ -102,3 +102,69 @@ HSV rgbToHsv(SDL_Color color)
 
     return ret;
 }
+
+
+/*************************************
+*    |                               *
+* 180 - - - - - - - - - - - -        *
+*    |                               *
+* 100 - - - - - - -X- <------- diff  *
+*    |                               *
+*    |          X                    *
+*    |      X                        *
+*  0 | X______________________       *
+*      0   1    2   3  <------- i    *
+*                                    *
+*             y = mx^p               *
+*************************************/
+unsigned int getColor(unsigned int baseColor, unsigned int ambientColor, double reflectiveness, unsigned int i, unsigned int numColors)
+{
+    unsigned int diffA = abs((int)ambientColor - (int)baseColor);
+    unsigned int diffB = std::min(baseColor, ambientColor) + (360 - std::max(baseColor, ambientColor));
+    unsigned int diff = std::min(diffA, diffB);
+    //Value to adjust how step of a curve we want range 0 - 2
+    const double p = (1 - reflectiveness) * 2;
+
+    //Solve for m
+    double m = diff / std::pow((double)numColors, p);
+    int newColor;
+
+    if(diffA < diffB || baseColor > 360 / 2)
+    {
+        newColor = round((double)baseColor + (m * std::pow((double)i, p)));
+    }else{
+        newColor = round((double)baseColor - (m * std::pow((double)i, p)));
+    }
+
+    if(newColor > 360)
+    {
+        newColor -= 360;
+    }
+
+    if(newColor < 0)
+    {
+        newColor = 360 - abs(newColor);
+    }
+
+    return newColor;
+}
+
+/*************************************
+*    |                               *
+*  1 - - - - - - - - - X - - -       *
+*    |                               *
+*    |              X                *
+*    |                               *
+*    |          X                    *
+*    |      X                        *
+*  0 | X______________________       *
+*      0    1   2   3   4  <----- i  *
+*                                    *
+*             y = mx^p               *
+*************************************/
+double getOffset(double p, double upperBound, unsigned int i, unsigned int numColors)
+{
+    //Solve for m
+    double m = upperBound / std::pow((double)numColors - 1, p);
+    return m * std::pow((double)i, p);
+}

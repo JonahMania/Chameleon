@@ -5,22 +5,20 @@
 #include <map>
 #include <string>
 
-#include "Entity.hpp"
+#include "StateMachine.hpp"
+#include "RenderableState.hpp"
+#include "TemplateState.hpp"
 
-class Renderable : public Entity
+class Renderable
 {
     public:
         Renderable();
+        StateMachine<RenderableState> renderStateMachine;
+        StateMachine<TemplateState> templateStateMachine;
+        void freeAllStates();
         bool render(SDL_Renderer* renderer);
         void setRenderPosition(unsigned int x, unsigned int y);
-        void freeAllTextures();
-    protected:
-        bool setCurrentTexture(int name);
-        bool addTexture(int name, SDL_Texture* texture);
     private:
-        SDL_Texture* currentTexture;
-        std::map<int, SDL_Texture*> textures;
-        SDL_Rect textureBounds;
         SDL_Rect dest;
 };
 

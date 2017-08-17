@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "lib/engine/engine.hpp"
-#include "tiles/SimpleTile.hpp"
+// #include "tiles/SimpleTile.hpp"
 
 const int screenWidth = 1024; //Width of the game window
 const int screenHeight = 768; //Height of the game window
@@ -63,7 +63,36 @@ int main()
         return -1;
     }
 
-    SimpleTile tile = SimpleTile(windowRenderer);
+    std::vector<SDL_Color> keys = std::vector<SDL_Color>();
+    //Add the color key for our fragment
+    SDL_Color colorKey;
+    colorKey.r = 155;
+    colorKey.g = 173;
+    colorKey.b = 183;
+    keys.push_back(colorKey);
+    colorKey.r = 132;
+    colorKey.g = 126;
+    colorKey.b = 135;
+    keys.push_back(colorKey);
+    colorKey.r = 105;
+    colorKey.g = 106;
+    colorKey.b = 106;
+    keys.push_back(colorKey);
+    colorKey.r = 63;
+    colorKey.g = 63;
+    colorKey.b = 116;
+    keys.push_back(colorKey);
+    colorKey.r = 34;
+    colorKey.g = 32;
+    colorKey.b = 52;
+    keys.push_back(colorKey);
+
+    Renderable tile = Renderable();
+    tile.renderStateMachine.addState(new RenderableState("redState", keys));
+    tile.templateStateMachine.addState(new TemplateState("simpleTile", "resources/fragments/simpleTile.png", 2));
+
+    tile.renderStateMachine.setCurrentState("redState");
+    tile.templateStateMachine.setCurrentState("simpleTile");
 
     while( !quit )
     {
@@ -78,7 +107,7 @@ int main()
                  switch(event.key.keysym.sym)
                  {
                      case SDLK_q:
-                        tile.switchColor();
+                        // tile.switchColor();
                         break;
                     default:
                         break;
@@ -94,6 +123,7 @@ int main()
         }
     }
 
-    tile.close();
+    tile.freeAllStates();
+    TemplateState::freeAllTemplates();
     close();
 }
