@@ -1,7 +1,7 @@
 *.o
-engine/engine.a
-engine/obj/
-engine/engine/
+engine.a
+obj/
+engine/
 samples/configParser/obj/
 samples/configParser/configParser
 samples/configParser/src/lib/engine/

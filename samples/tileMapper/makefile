@@ -30,7 +30,7 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 #Copy
 copy:
 	@$(MD) ./src/lib
-	$(CP) ../../engine/engine ./src/lib/engine
+	$(CP) ../../engine ./src/lib/engine
 
 #Clean
 clean:
