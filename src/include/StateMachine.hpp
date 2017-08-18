@@ -11,19 +11,19 @@ template<typename T> class StateMachine
 {
     public:
         static_assert(std::is_base_of<State, T>::value, "StateMachine type must derive from State");
-        void setCurrentState(std::string stateName);
+        void setCurrentState(int stateName);
         void addState(T* state);
-        void freeState(std::string stateName);
+        void freeState(int stateName);
         void freeAllStates();
         T* currentState;
     private:
-        std::map<std::string, T*> states;
+        std::map<int, T*> states;
 };
 
 template<typename T>
-void StateMachine<T>::setCurrentState(std::string stateName)
+void StateMachine<T>::setCurrentState(int stateName)
 {
-    typename std::map<std::string,T*>::iterator it;
+    typename std::map<int,T*>::iterator it;
 
     it = states.find(stateName);
     if(it != states.end())
@@ -35,16 +35,16 @@ void StateMachine<T>::setCurrentState(std::string stateName)
 template<typename T>
 void StateMachine<T>::addState(T* state)
 {
-    if(!states.insert(std::pair<std::string,T*>(state->getName(),state)).second)
+    if(!states.insert(std::pair<int,T*>(state->getName(),state)).second)
     {
       std::cerr<<"Error: State with name: '"<<state->getName()<<"' already exists in entity"<<std::endl;
     }
 }
 
 template<typename T>
-void StateMachine<T>::freeState(std::string stateName)
+void StateMachine<T>::freeState(int stateName)
 {
-    typename std::map<std::string,T*>::iterator it;
+    typename std::map<int,T*>::iterator it;
 
     it = states.find(stateName);
     if(it != states.end())

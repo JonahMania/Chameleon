@@ -19,6 +19,9 @@ std::vector<std::pair<unsigned char, int>> map = {
     std::pair<unsigned char, int>(TILE_FLIP_Y, 4)
 };
 
+#define STATE_RED 0
+#define STATE_BRICK 0
+
 int main()
 {
     if(!window.initialize())
@@ -51,11 +54,11 @@ int main()
     keys.push_back(colorKey);
 
     TileMap tileMap = TileMap();
-    tileMap.renderStateMachine.addState(new RenderableState("redState", keys));
-    tileMap.templateStateMachine.addState(new TemplateSheetState("simpleTile", "resources/fragments/bricks.png", 16, 16, 2));
+    tileMap.renderStateMachine.addState(new RenderableState(STATE_RED, keys));
+    tileMap.templateStateMachine.addState(new TemplateSheetState(STATE_BRICK, "resources/fragments/bricks.png", 16, 16, 2));
 
-    tileMap.renderStateMachine.setCurrentState("redState");
-    tileMap.templateStateMachine.setCurrentState("simpleTile");
+    tileMap.renderStateMachine.setCurrentState(STATE_RED);
+    tileMap.templateStateMachine.setCurrentState(STATE_BRICK);
     tileMap.setMap(map, 4);
 
     // tileMap.templateStateMachine.currentState->setCurrentSprite(1);

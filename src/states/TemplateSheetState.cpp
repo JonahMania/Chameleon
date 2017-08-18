@@ -1,6 +1,6 @@
 #include "../include/TemplateSheetState.hpp"
 
-TemplateSheetState::TemplateSheetState(std::string n, std::string p, unsigned int w, unsigned int h, unsigned int scale) : TemplateState(n, p, scale)
+TemplateSheetState::TemplateSheetState(int n, std::string p, unsigned int w, unsigned int h, unsigned int scale) : TemplateState(n, p, scale)
 {
     spriteWidth = w * scale;
     spriteHeight = h * scale;

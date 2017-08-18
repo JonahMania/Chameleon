@@ -2,7 +2,7 @@
 
 std::map<std::string,SDL_Surface*> TemplateState::templates = std::map<std::string,SDL_Surface*>();
 
-TemplateState::TemplateState(std::string n, std::string p, unsigned int scale) : State(n)
+TemplateState::TemplateState(int n, std::string p, unsigned int scale) : State(n)
 {
     path = p;
     surface = TemplateState::getTemplate(path, scale);

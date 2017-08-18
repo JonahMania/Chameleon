@@ -12,7 +12,7 @@
 class TemplateState : public State
 {
     public:
-        TemplateState(std::string n, std::string p, unsigned int scale = 1);
+        TemplateState(int n, std::string p, unsigned int scale = 1);
         SDL_Surface* getTemplate();
         SDL_Rect* getBounds();
         static void freeTemplate(std::string p);

@@ -1,11 +1,11 @@
 #include "../include/State.hpp"
 
-State::State(std::string n)
+State::State(int n)
 {
     name = n;
 }
 
-std::string State::getName()
+int State::getName()
 {
     return name;
 }

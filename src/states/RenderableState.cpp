@@ -16,7 +16,7 @@ struct luminanceSort
     }
 };
 
-RenderableState::RenderableState(std::string n, std::vector<SDL_Color> c) : State(n)
+RenderableState::RenderableState(int n, std::vector<SDL_Color> c) : State(n)
 {
     //Set color keys
     colorKeys = c;
@@ -118,7 +118,7 @@ SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* 
     SDL_Texture* ret;
 
     //Check if we already created this texture
-    std::map<std::string, SDL_Texture*>::iterator it;
+    std::map<int, SDL_Texture*>::iterator it;
     it = textures.find(temp->getName());
     //If we do return it
     if(it != textures.end())
@@ -152,7 +152,7 @@ SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* 
     ret = SDL_CreateTextureFromSurface(renderer, paintedSurface);
     SDL_FreeSurface(paintedSurface);
 
-    textures.insert(std::pair<std::string, SDL_Texture*>(temp->getName(), ret));
+    textures.insert(std::pair<int, SDL_Texture*>(temp->getName(), ret));
     return ret;
 }
 

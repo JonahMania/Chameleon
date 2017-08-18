@@ -9,7 +9,7 @@
 class TemplateSheetState : public TemplateState
 {
     public:
-        TemplateSheetState(std::string n, std::string p, unsigned int w, unsigned int h, unsigned int scale = 1);
+        TemplateSheetState(int n, std::string p, unsigned int w, unsigned int h, unsigned int scale = 1);
         unsigned int getNumSprites();
         void setCurrentSprite(unsigned int i);
     private:

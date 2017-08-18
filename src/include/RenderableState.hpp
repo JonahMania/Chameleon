@@ -13,7 +13,7 @@
 class RenderableState : public State
 {
     public:
-        RenderableState(std::string n, std::vector<SDL_Color> c);
+        RenderableState(int n, std::vector<SDL_Color> c);
         void setHue(unsigned int h);
         void setAmbientColor(unsigned int ac);
         void setSaturation(double s);
@@ -23,7 +23,7 @@ class RenderableState : public State
         SDL_Texture* getTexture(SDL_Renderer* renderer, TemplateState* temp);
         ~RenderableState();
     private:
-        std::map<std::string, SDL_Texture*> textures;
+        std::map<int, SDL_Texture*> textures;
         std::map<SDL_Color, SDL_Color> colorMap;
         std::vector<SDL_Color> colorKeys;
         unsigned int hue;
