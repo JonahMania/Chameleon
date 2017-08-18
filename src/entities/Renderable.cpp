@@ -16,11 +16,11 @@ void Renderable::freeAllStates()
     templateStateMachine.freeAllStates();
 }
 
-bool Renderable::render(SDL_Renderer* renderer)
+bool Renderable::render(Window window)
 {
     //Create texture
-    SDL_Texture* temp = renderStateMachine.currentState->getTexture(renderer, templateStateMachine.currentState);
+    SDL_Texture* temp = renderStateMachine.currentState->getTexture(window.getRenderer(), templateStateMachine.currentState);
     dest.w = templateStateMachine.currentState->getBounds()->w;
     dest.h = templateStateMachine.currentState->getBounds()->h;
-    SDL_RenderCopy(renderer, temp, templateStateMachine.currentState->getBounds(), &dest);
+    window.render(temp, templateStateMachine.currentState->getBounds(), &dest);
 }

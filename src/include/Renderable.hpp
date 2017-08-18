@@ -8,6 +8,7 @@
 #include "StateMachine.hpp"
 #include "RenderableState.hpp"
 #include "TemplateState.hpp"
+#include "Window.hpp"
 
 class Renderable
 {
@@ -16,7 +17,7 @@ class Renderable
         StateMachine<RenderableState> renderStateMachine;
         StateMachine<TemplateState> templateStateMachine;
         void freeAllStates();
-        bool render(SDL_Renderer* renderer);
+        bool render(Window window);
         void setRenderPosition(unsigned int x, unsigned int y);
     private:
         SDL_Rect dest;

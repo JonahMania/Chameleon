@@ -1,6 +1,7 @@
 #ifndef _ENGINE_HPP_
 #define _ENGINE_HPP_
 
+#include "Window.hpp"
 #include "Renderable.hpp"
 #include "State.hpp"
 #include "RenderableState.hpp"
