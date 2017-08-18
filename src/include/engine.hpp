@@ -3,6 +3,7 @@
 
 #include "Window.hpp"
 #include "Renderable.hpp"
+#include "TileMap.hpp"
 #include "State.hpp"
 #include "RenderableState.hpp"
 #include "TemplateState.hpp"

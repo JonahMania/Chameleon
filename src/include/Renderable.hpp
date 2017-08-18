@@ -19,7 +19,7 @@ class Renderable
         void freeAllStates();
         bool render(Window window);
         void setRenderPosition(unsigned int x, unsigned int y);
-    private:
+    protected:
         SDL_Rect dest;
 };
 

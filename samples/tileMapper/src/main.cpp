@@ -8,6 +8,17 @@ SDL_Event event; //SDL_Event to handle user input
 bool quit = false;
 Window window(1024, 768);
 
+std::vector<std::pair<unsigned char, int>> map = {
+    std::pair<unsigned char, int>(0, 4),
+    std::pair<unsigned char, int>(0, 0),
+    std::pair<unsigned char, int>(0, 0),
+    std::pair<unsigned char, int>(TILE_FLIP_Y, 4),
+    std::pair<unsigned char, int>(0, 4),
+    std::pair<unsigned char, int>(0, 0),
+    std::pair<unsigned char, int>(0, 0),
+    std::pair<unsigned char, int>(TILE_FLIP_Y, 4)
+};
+
 int main()
 {
     if(!window.initialize())
@@ -39,17 +50,19 @@ int main()
     colorKey.b = 52;
     keys.push_back(colorKey);
 
-    Renderable tile = Renderable();
-    tile.renderStateMachine.addState(new RenderableState("redState", keys));
-    tile.templateStateMachine.addState(new TemplateSheetState("simpleTile", "resources/fragments/bricks.png", 16, 16, 2));
+    TileMap tileMap = TileMap();
+    tileMap.renderStateMachine.addState(new RenderableState("redState", keys));
+    tileMap.templateStateMachine.addState(new TemplateSheetState("simpleTile", "resources/fragments/bricks.png", 16, 16, 2));
 
-    tile.renderStateMachine.setCurrentState("redState");
-    tile.templateStateMachine.setCurrentState("simpleTile");
-    ((TemplateSheetState*)tile.templateStateMachine.currentState)->setCurrentSprite(1);
+    tileMap.renderStateMachine.setCurrentState("redState");
+    tileMap.templateStateMachine.setCurrentState("simpleTile");
+    tileMap.setMap(map, 4);
 
-    while( !quit )
+    // tileMap.templateStateMachine.currentState->setCurrentSprite(1);
+
+    while(!quit)
     {
-        while( SDL_PollEvent( &event ) != 0 )
+        while(SDL_PollEvent(&event) != 0)
         {
             //If the user has quit the program close correctly
             if( event.type == SDL_QUIT )
@@ -67,13 +80,13 @@ int main()
                  }
             }
             window.clear();
-            tile.render(window);
+            tileMap.render(window, -20, -20);
             //Update screen
             window.update();
         }
     }
 
-    tile.freeAllStates();
+    tileMap.freeAllStates();
     //Make sure to clear template cache
     TemplateState::freeAllTemplates();
     window.close();

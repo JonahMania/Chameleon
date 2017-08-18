@@ -39,6 +39,16 @@ bool Window::initialize()
     return true;
 }
 
+int Window::getHeight()
+{
+    return height;
+}
+
+int Window::getWidth()
+{
+    return width;
+}
+
 bool Window::clear()
 {
     if(SDL_SetRenderDrawColor(windowRenderer, 0, 0, 0, 0xFF) != 0)

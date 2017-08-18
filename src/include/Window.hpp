@@ -10,6 +10,8 @@ class Window
     public:
         Window(int w, int h);
         bool initialize();
+        int getHeight();
+        int getWidth();
         //Clear the screen to black
         bool clear();
         //Update the latest changes to the screen
