@@ -18,11 +18,12 @@ class TemplateState : public State
         static void freeTemplate(std::string p);
         static void freeAllTemplates();
         static std::map<std::string,SDL_Surface*> templates;
+    protected:
+        SDL_Surface* surface;
+        SDL_Rect bounds;
     private:
         static SDL_Surface* getTemplate(std::string p, unsigned int scale);
-        SDL_Surface* surface;
         std::string path;
-        SDL_Rect bounds;
 };
 
 #endif

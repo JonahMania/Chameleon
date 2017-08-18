@@ -20,7 +20,7 @@ bool Renderable::render(SDL_Renderer* renderer)
 {
     //Create texture
     SDL_Texture* temp = renderStateMachine.currentState->getTexture(renderer, templateStateMachine.currentState);
-    dest.w = templateStateMachine.currentState->getTemplate()->w;
-    dest.h = templateStateMachine.currentState->getTemplate()->h;
+    dest.w = templateStateMachine.currentState->getBounds()->w;
+    dest.h = templateStateMachine.currentState->getBounds()->h;
     SDL_RenderCopy(renderer, temp, templateStateMachine.currentState->getBounds(), &dest);
 }

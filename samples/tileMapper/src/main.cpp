@@ -89,10 +89,11 @@ int main()
 
     Renderable tile = Renderable();
     tile.renderStateMachine.addState(new RenderableState("redState", keys));
-    tile.templateStateMachine.addState(new TemplateState("simpleTile", "resources/fragments/simpleTile.png", 2));
+    tile.templateStateMachine.addState(new TemplateSheetState("simpleTile", "resources/fragments/bricks.png", 16, 16, 2));
 
     tile.renderStateMachine.setCurrentState("redState");
     tile.templateStateMachine.setCurrentState("simpleTile");
+    ((TemplateSheetState*)tile.templateStateMachine.currentState)->setCurrentSprite(1);
 
     while( !quit )
     {
@@ -124,6 +125,7 @@ int main()
     }
 
     tile.freeAllStates();
+    //Make sure to clear template cache
     TemplateState::freeAllTemplates();
     close();
 }
