@@ -54,8 +54,8 @@ Uint32 Timer::getTime()
     }
     if(isPaused)
     {
-        pausedTime;
+        return pausedTime;
     }else{
-        SDL_GetTicks() - startTime;
+        return SDL_GetTicks() - startTime;
     }
 }

@@ -6,10 +6,35 @@ TemplateState::TemplateState(int n, std::string p, unsigned int scale) : State(n
 {
     path = p;
     surface = TemplateState::getTemplate(path, scale);
+    if(surface == NULL)
+    {
+        return;
+    }
     bounds.x = 0;
     bounds.y = 0;
     bounds.w = surface->w;
     bounds.h = surface->h;
+}
+TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, int scale) : State(n)
+{
+    unsigned int numXSprites;
+    unsigned int numYSprites;
+    unsigned int y;
+    unsigned int x;
+    path = p;
+    surface = TemplateState::getTemplate(path, scale);
+    if(surface == NULL)
+    {
+        return;
+    }
+    numXSprites = floor((double)surface->w / (double)(w * scale));
+    numYSprites = floor((double)surface->h / (double)(h * scale));
+    y = floor(i / numXSprites);
+    x = i - (y * numXSprites);
+    bounds.w = w * scale;
+    bounds.h = h * scale;
+    bounds.x = w * scale * x;
+    bounds.y = h * scale * y;
 }
 
 SDL_Surface* TemplateState::getTemplate()

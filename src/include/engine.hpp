@@ -7,7 +7,6 @@
 #include "State.hpp"
 #include "RenderableState.hpp"
 #include "TemplateState.hpp"
-#include "TemplateSheetState.hpp"
 #include "Timer.hpp"
 
 #endif

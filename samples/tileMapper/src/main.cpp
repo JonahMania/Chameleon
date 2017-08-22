@@ -11,125 +11,6 @@ Timer frameTimer = Timer();
 const int FPS = 30;
 const int TIME_PER_FRAME = 1000 / FPS;
 
-std::vector<std::pair<unsigned char, int>> map = {
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 5),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(0, 15),
-    std::pair<unsigned char, int>(TILE_FLIP_Y | TILE_FLIP_X, 1),
-    std::pair<unsigned char, int>(0, 4),
-
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0),
-    std::pair<unsigned char, int>(0, 0)
-};
-
 #define STATE_RED_0 0
 #define STATE_RED_1 1
 #define STATE_RED_2 2
@@ -138,7 +19,11 @@ std::vector<std::pair<unsigned char, int>> map = {
 #define STATE_RED_5 5
 #define STATE_RED_6 6
 #define STATE_RED_7 7
-#define STATE_BRICK 0
+
+#define BRICK_FILL 0
+#define BRICK_EDGE_LEFT 1
+#define BRICK_EDGE_RIGHT 2
+#define BRICK_BACKGROUND 3
 
 int main()
 {
@@ -175,58 +60,100 @@ int main()
     colorKey.b = 52;
     keys.push_back(colorKey);
 
-    TileMap tileMap = TileMap();
+    TileMap tileMap = TileMap(13, 9);
 
     RenderableState* red_0 = new RenderableState(STATE_RED_0, keys);
     red_0->setReflectiveness(0.5);
     red_0->setSaturation(0.4);
-    red_0->setBrightness(0.4);
+    red_0->setBrightness(0.2);
     RenderableState* red_1 = new RenderableState(STATE_RED_1, keys);
     red_1->setReflectiveness(0.5);
     red_1->setSaturation(0.4);
-    red_1->setBrightness(0.4);
-    red_1->setAmbientColor(10);
+    red_1->setBrightness(0.25);
     RenderableState* red_2 = new RenderableState(STATE_RED_2, keys);
     red_2->setReflectiveness(0.5);
     red_2->setSaturation(0.4);
-    red_2->setBrightness(0.4);
-    red_2->setAmbientColor(20);
+    red_2->setBrightness(0.3);
     RenderableState* red_3 = new RenderableState(STATE_RED_3, keys);
     red_3->setReflectiveness(0.5);
     red_3->setSaturation(0.4);
-    red_3->setBrightness(0.4);
-    red_3->setAmbientColor(30);
+    red_3->setBrightness(0.35);
     RenderableState* red_4 = new RenderableState(STATE_RED_4, keys);
     red_4->setReflectiveness(0.5);
     red_4->setSaturation(0.4);
     red_4->setBrightness(0.4);
-    red_4->setAmbientColor(40);
     RenderableState* red_5 = new RenderableState(STATE_RED_5, keys);
     red_5->setReflectiveness(0.5);
     red_5->setSaturation(0.4);
-    red_5->setBrightness(0.4);
-    red_5->setAmbientColor(50);
+    red_5->setBrightness(0.45);
     RenderableState* red_6 = new RenderableState(STATE_RED_6, keys);
     red_6->setReflectiveness(0.5);
     red_6->setSaturation(0.4);
-    red_6->setBrightness(0.4);
-    red_6->setAmbientColor(60);
+    red_6->setBrightness(0.5);
     RenderableState* red_7 = new RenderableState(STATE_RED_7, keys);
     red_7->setReflectiveness(0.5);
     red_7->setSaturation(0.4);
-    red_7->setBrightness(0.4);
-    red_7->setAmbientColor(70);
+    red_7->setBrightness(0.55);
 
     tileMap.renderStateMachine.addState(red_0);
     tileMap.renderStateMachine.addState(red_1);
     tileMap.renderStateMachine.addState(red_2);
     tileMap.renderStateMachine.addState(red_3);
     tileMap.renderStateMachine.addState(red_4);
-    tileMap.templateStateMachine.addState(new TemplateSheetState(STATE_BRICK, "resources/fragments/bricks.png", 16, 16, 2));
+    tileMap.templateStateMachine.addState(new TemplateState(BRICK_FILL, "resources/fragments/bricks.png", 16, 16, 0, 2));
+    tileMap.templateStateMachine.addState(new TemplateState(BRICK_EDGE_LEFT, "resources/fragments/bricks.png", 16, 16, 4, 2));
+    tileMap.templateStateMachine.addState(new TemplateState(BRICK_EDGE_RIGHT, "resources/fragments/bricks.png", 16, 16, 5, 2));
+    tileMap.templateStateMachine.addState(new TemplateState(BRICK_BACKGROUND, "resources/fragments/bricks.png", 16, 16, 1, 2));
 
     tileMap.renderStateMachine.setCurrentState(STATE_RED_0);
-    tileMap.templateStateMachine.setCurrentState(STATE_BRICK);
-    tileMap.setMap(map, 12);
+
+    tileMap.addTile(0, 0, BRICK_FILL);
+    tileMap.addTile(1, 0, BRICK_EDGE_RIGHT);
+    tileMap.addTile(0, 1, BRICK_FILL);
+    tileMap.addTile(1, 1, BRICK_EDGE_RIGHT);
+    tileMap.addTile(0, 2, BRICK_FILL);
+    tileMap.addTile(1, 2, BRICK_EDGE_RIGHT);
+    tileMap.addTile(0, 3, BRICK_FILL);
+    tileMap.addTile(1, 3, BRICK_EDGE_RIGHT);
+    tileMap.addTile(11, 3, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(12, 3, BRICK_EDGE_LEFT);
+    tileMap.addTile(0, 4, BRICK_FILL);
+    tileMap.addTile(1, 4, BRICK_EDGE_RIGHT);
+    tileMap.addTile(11, 4, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(12, 4, BRICK_EDGE_LEFT);
+    tileMap.addTile(0, 5, BRICK_FILL);
+    tileMap.addTile(1, 5, BRICK_EDGE_RIGHT);
+    tileMap.addTile(11, 5, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(12, 5, BRICK_EDGE_LEFT);
+    tileMap.addTile(0, 6, BRICK_FILL);
+    tileMap.addTile(1, 6, BRICK_EDGE_RIGHT);
+    tileMap.addTile(3, 6, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(4, 6, BRICK_EDGE_LEFT);
+    tileMap.addTile(5, 6, BRICK_EDGE_RIGHT);
+    tileMap.addTile(11, 6, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(12, 6, BRICK_EDGE_LEFT);
+    tileMap.addTile(0, 7, BRICK_FILL);
+    tileMap.addTile(1, 7, BRICK_EDGE_RIGHT);
+    tileMap.addTile(3, 7, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(4, 7, BRICK_EDGE_LEFT);
+    tileMap.addTile(5, 7, BRICK_FILL);
+    tileMap.addTile(6, 7, BRICK_EDGE_RIGHT);
+    tileMap.addTile(11, 7, BRICK_BACKGROUND, TILE_FLIP_Y | TILE_FLIP_X);
+    tileMap.addTile(12, 7, BRICK_EDGE_LEFT);
+    tileMap.addTile(0, 8, BRICK_FILL);
+    tileMap.addTile(1, 8, BRICK_FILL);
+    tileMap.addTile(2, 8, BRICK_FILL);
+    tileMap.addTile(3, 8, BRICK_FILL);
+    tileMap.addTile(4, 8, BRICK_FILL);
+    tileMap.addTile(5, 8, BRICK_FILL);
+    tileMap.addTile(6, 8, BRICK_FILL);
+    tileMap.addTile(7, 8, BRICK_FILL);
+    tileMap.addTile(8, 8, BRICK_FILL);
+    tileMap.addTile(9, 8, BRICK_FILL);
+    tileMap.addTile(10, 8, BRICK_FILL);
+    tileMap.addTile(11, 8, BRICK_FILL);
+    tileMap.addTile(12, 8, BRICK_FILL);
+
 
     int currState = 0;
     int currTime = 0;
@@ -258,16 +185,19 @@ int main()
                         break;
                  }
             }
-            window.clear();
-            tileMap.render(window, -20, -20);
-            //Update screen
-            window.update();
-            currTime = frameTimer.getTime();
-            if(currTime < TIME_PER_FRAME)
-            {
-                SDL_Delay(TIME_PER_FRAME - currTime);
-            }
         }
+
+        window.clear();
+        tileMap.render(window,-20,-20);
+        //Update screen
+        window.update();
+        //Cap frame rate
+        currTime = frameTimer.getTime();
+        if(currTime < TIME_PER_FRAME)
+        {
+            SDL_Delay(TIME_PER_FRAME - currTime);
+        }
+
     }
 
     tileMap.freeAllStates();

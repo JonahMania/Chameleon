@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "Renderable.hpp"
-#include "TemplateSheetState.hpp"
 
 #define TILE_NO_RENDER 1
 #define TILE_FLIP_X 2
@@ -13,9 +12,9 @@
 class TileMap : public Renderable
 {
     public:
-        StateMachine<TemplateSheetState> templateStateMachine;
+        TileMap(unsigned int width, unsigned int height);
+        bool addTile(unsigned int x, unsigned int y, int templateState, unsigned char o = 0);
         bool render(Window window, int xPos, int yPos);
-        void setMap(std::vector<std::pair<unsigned char,int>> m, unsigned int r);
     private:
         unsigned int rowWidth;
         std::vector<std::pair<unsigned char,int>> map;
