@@ -10,6 +10,7 @@
 template<typename T> class StateMachine
 {
     public:
+        StateMachine();
         static_assert(std::is_base_of<State, T>::value, "StateMachine type must derive from State");
         void setCurrentState(int stateName);
         void addState(T* state);
@@ -19,6 +20,12 @@ template<typename T> class StateMachine
     private:
         std::map<int, T*> states;
 };
+
+template<typename T>
+StateMachine<T>::StateMachine()
+{
+    currentState = NULL;
+}
 
 template<typename T>
 void StateMachine<T>::setCurrentState(int stateName)
@@ -37,7 +44,12 @@ void StateMachine<T>::addState(T* state)
 {
     if(!states.insert(std::pair<int,T*>(state->getName(),state)).second)
     {
-      std::cerr<<"Error: State with name: '"<<state->getName()<<"' already exists in entity"<<std::endl;
+        std::cerr<<"Error: State with name: '"<<state->getName()<<"' already exists in entity"<<std::endl;
+        return;
+    }
+    if(currentState == NULL)
+    {
+        currentState = state;
     }
 }
 
