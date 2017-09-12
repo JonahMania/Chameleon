@@ -24,7 +24,7 @@ class Renderable
         void setRenderState(int stateName);
         void setTemplateState(int stateName);
         bool render(Window window);
-        void setRenderPosition(unsigned int x, unsigned int y);
+        void setRenderPosition(int x, int y);
         void setRenderMode(unsigned char r);
         virtual ~Renderable();
     private:

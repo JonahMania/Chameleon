@@ -64,10 +64,10 @@ bool Renderable::render(Window window)
     }
 }
 
-void Renderable::setRenderPosition(unsigned int x, unsigned int y)
+void Renderable::setRenderPosition(int x, int y)
 {
-    // dest.x = x;
-    // dest.y = y;
+    dest.x = x;
+    dest.y = y;
 }
 
 void Renderable::setRenderMode(unsigned char r)

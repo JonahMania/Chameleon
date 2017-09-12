@@ -37,7 +37,7 @@ bool TileMap::render(Window window, int xPos, int yPos)
     {
         if(tile)
         {
-            tile->setRenderPosition(xPos + (x * tileWidth), yPos + (y * tileHeight));
+            tile->setRenderPosition(xPos + (x * (int)tileWidth), yPos + (y * (int)tileHeight));
             tile->render(window);
         }
         //Move to next tile position
