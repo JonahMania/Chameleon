@@ -83,6 +83,5 @@ void Renderable::setRenderMode(unsigned char r)
 
 Renderable::~Renderable()
 {
-    renderStateMachine.freeAllStates();
-    templateStateMachine.freeAllStates();
+
 }

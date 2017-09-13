@@ -35,6 +35,16 @@ Renderable* TileMap::getTile(unsigned int x, unsigned int y)
     return map[(rowWidth * y) + x];
 }
 
+unsigned int TileMap::getMapWidth()
+{
+    return rowWidth;
+}
+
+unsigned int TileMap::getMapHeight()
+{
+    return floor(map.size() / rowWidth);
+}
+
 bool TileMap::render(Window window, int xPos, int yPos)
 {
     int x = 0;

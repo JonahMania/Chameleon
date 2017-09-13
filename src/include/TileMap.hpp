@@ -12,6 +12,8 @@ class TileMap
         TileMap(unsigned int width, unsigned int height, unsigned int tWidth, unsigned int tHeight);
         bool addTile(unsigned int x, unsigned int y, Renderable* tile);
         Renderable* getTile(unsigned int x, unsigned int y);
+        unsigned int getMapWidth();
+        unsigned int getMapHeight();
         bool render(Window window, int xPos, int yPos);
     private:
         unsigned int rowWidth;

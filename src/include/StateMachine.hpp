@@ -53,33 +53,4 @@ void StateMachine<T>::addState(T* state)
     }
 }
 
-template<typename T>
-void StateMachine<T>::freeState(int stateName)
-{
-    typename std::map<int,T*>::iterator it;
-
-    it = states.find(stateName);
-    if(it != states.end())
-    {
-        if(it->second != NULL)
-        {
-            delete it->second;
-        }
-        states.erase(it);
-    }
-}
-
-template<typename T>
-void StateMachine<T>::freeAllStates()
-{
-    for(auto& state : states)
-    {
-        if(state.second != NULL)
-        {
-            delete state.second;
-        }
-    }
-    states.clear();
-}
-
 #endif
