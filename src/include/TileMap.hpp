@@ -8,6 +8,7 @@
 class TileMap
 {
     public:
+        TileMap();
         TileMap(unsigned int width, unsigned int height, unsigned int tWidth, unsigned int tHeight);
         bool addTile(unsigned int x, unsigned int y, Renderable* tile);
         Renderable* getTile(unsigned int x, unsigned int y);

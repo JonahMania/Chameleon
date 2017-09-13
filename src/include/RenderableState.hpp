@@ -20,7 +20,7 @@ class RenderableState : public State
         void setReflectiveness(double r);
         void setBrightness(double b);
         bool generatePalette();
-        SDL_Texture* getTexture(SDL_Renderer* renderer, TemplateState* temp);
+        SDL_Texture* newTexture(SDL_Renderer* renderer, TemplateState* temp);
         ~RenderableState();
     private:
         std::map<int, SDL_Texture*> textures;

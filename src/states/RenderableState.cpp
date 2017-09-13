@@ -111,7 +111,7 @@ bool RenderableState::generatePalette()
     return true;
 }
 
-SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* temp)
+SDL_Texture* RenderableState::newTexture(SDL_Renderer* renderer, TemplateState* temp)
 {
     SDL_Color pixelColor;
     SDL_Surface* paintedSurface;

@@ -1,5 +1,13 @@
 #include "../include/TileMap.hpp"
 
+TileMap::TileMap()
+{
+    rowWidth = 4;
+    tileWidth = 8;
+    tileHeight = 8;
+    map = std::vector<Renderable*>(16, NULL);
+}
+
 TileMap::TileMap(unsigned int width, unsigned int height, unsigned int tWidth, unsigned int tHeight)
 {
     rowWidth = width;
