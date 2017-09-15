@@ -40,9 +40,10 @@ bool Renderable::render(Window window)
         //Create texture
         if(renderStateMachine.currentState == NULL)
         {
-            temp = SDL_CreateTextureFromSurface(window.getRenderer(), templateStateMachine.currentState->getTemplate());
+            std::cerr<<"Error: No render state set cannot create texture"<<std::endl;
+            return false;
         }else{
-            temp = renderStateMachine.currentState->newTexture(window.getRenderer(), templateStateMachine.currentState);
+            temp = renderStateMachine.currentState->getTexture(window.getRenderer(), templateStateMachine.currentState);
         }
         dest.w = templateStateMachine.currentState->getBounds()->w;
         dest.h = templateStateMachine.currentState->getBounds()->h;
@@ -66,7 +67,6 @@ bool Renderable::render(Window window)
 
             SDL_RenderCopyEx(window.getRenderer(), temp, templateStateMachine.currentState->getBounds(), &dest, 0, NULL, flip);
         }
-        SDL_DestroyTexture(temp);
     }
 }
 

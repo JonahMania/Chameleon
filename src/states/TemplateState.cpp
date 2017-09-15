@@ -14,6 +14,7 @@ TemplateState::TemplateState(int n, std::string p, unsigned int scale) : State(n
     bounds.y = 0;
     bounds.w = surface->w;
     bounds.h = surface->h;
+    surfaceId = std::string(path + "_" + std::to_string(bounds.x) + "_" + std::to_string(bounds.y) + "_" + std::to_string(bounds.w) + "_" + std::to_string(bounds.h));
 }
 TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, int scale) : State(n)
 {
@@ -35,6 +36,7 @@ TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int 
     bounds.h = h * scale;
     bounds.x = w * scale * x;
     bounds.y = h * scale * y;
+    surfaceId = std::string(path + "_" + std::to_string(bounds.x) + "_" + std::to_string(bounds.y) + "_" + std::to_string(bounds.w) + "_" + std::to_string(bounds.h));
 }
 
 SDL_Surface* TemplateState::getTemplate()
@@ -45,6 +47,16 @@ SDL_Surface* TemplateState::getTemplate()
 SDL_Rect* TemplateState::getBounds()
 {
     return &bounds;
+}
+
+std::string TemplateState::getPath()
+{
+    return path;
+}
+
+std::string TemplateState::getSurfaceId()
+{
+    return surfaceId;
 }
 
 SDL_Surface* TemplateState::getTemplate(std::string p, unsigned int scale)

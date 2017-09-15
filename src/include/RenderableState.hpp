@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <string>
 
 #include "State.hpp"
 #include "TemplateState.hpp"
@@ -20,10 +19,11 @@ class RenderableState : public State
         void setReflectiveness(double r);
         void setBrightness(double b);
         bool generatePalette();
-        SDL_Texture* newTexture(SDL_Renderer* renderer, TemplateState* temp);
+        SDL_Texture* getTexture(SDL_Renderer* renderer, TemplateState* temp);
         ~RenderableState();
     private:
-        std::map<int, SDL_Texture*> textures;
+        //String in form of path_x_y_w_h for unique id of template
+        std::map<std::string, SDL_Texture*> textures;
         std::map<SDL_Color, SDL_Color> colorMap;
         std::vector<SDL_Color> colorKeys;
         unsigned int hue;

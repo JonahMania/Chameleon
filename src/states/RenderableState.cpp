@@ -111,15 +111,14 @@ bool RenderableState::generatePalette()
     return true;
 }
 
-SDL_Texture* RenderableState::newTexture(SDL_Renderer* renderer, TemplateState* temp)
+SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* temp)
 {
     SDL_Color pixelColor;
     SDL_Surface* paintedSurface;
     SDL_Texture* ret;
-
     //Check if we already created this texture
-    std::map<int, SDL_Texture*>::iterator it;
-    it = textures.find(temp->getName());
+    std::map<std::string, SDL_Texture*>::iterator it;
+    it = textures.find(temp->getSurfaceId());
     //If we do return it
     if(it != textures.end())
     {
@@ -151,8 +150,7 @@ SDL_Texture* RenderableState::newTexture(SDL_Renderer* renderer, TemplateState* 
     }
     ret = SDL_CreateTextureFromSurface(renderer, paintedSurface);
     SDL_FreeSurface(paintedSurface);
-
-    textures.insert(std::pair<int, SDL_Texture*>(temp->getName(), ret));
+    textures.insert(std::pair<std::string, SDL_Texture*>(temp->getSurfaceId(), ret));
     return ret;
 }
 
