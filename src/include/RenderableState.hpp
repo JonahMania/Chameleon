@@ -20,6 +20,7 @@ class RenderableState : public State
         void setBrightness(double b);
         bool generatePalette();
         SDL_Texture* getTexture(SDL_Renderer* renderer, TemplateState* temp);
+        void clearTextureCache();
         ~RenderableState();
     private:
         //String in form of path_x_y_w_h for unique id of template

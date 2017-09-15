@@ -35,7 +35,10 @@ void RenderableState::setHue(unsigned int h)
     }else{
         hue = h;
     }
+    //Clear color map so new one will be created
+    colorMap.clear();
 }
+
 
 void RenderableState::setAmbientColor(unsigned int ac)
 {
@@ -45,6 +48,8 @@ void RenderableState::setAmbientColor(unsigned int ac)
     }else{
         ambientColor = ac;
     }
+    //Clear color map so new one will be created
+    colorMap.clear();
 }
 
 void RenderableState::setSaturation(double s)
@@ -55,6 +60,8 @@ void RenderableState::setSaturation(double s)
     }else{
         saturation = s;
     }
+    //Clear color map so new one will be created
+    colorMap.clear();
 }
 
 void RenderableState::setReflectiveness(double r)
@@ -67,6 +74,8 @@ void RenderableState::setReflectiveness(double r)
     }else{
         reflectiveness = r;
     }
+    //Clear color map so new one will be created
+    colorMap.clear();
 }
 
 void RenderableState::setBrightness(double b)
@@ -79,6 +88,8 @@ void RenderableState::setBrightness(double b)
     }else{
         brightness = b;
     }
+    //Clear color map so new one will be created
+    colorMap.clear();
 }
 
 bool RenderableState::generatePalette()
@@ -148,13 +159,14 @@ SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* 
             setPixel(paintedSurface, i, newPixelColor);
         }
     }
+    std::cout<<"New texture c: "<<hue<<std::endl;
     ret = SDL_CreateTextureFromSurface(renderer, paintedSurface);
     SDL_FreeSurface(paintedSurface);
     textures.insert(std::pair<std::string, SDL_Texture*>(temp->getSurfaceId(), ret));
     return ret;
 }
 
-RenderableState::~RenderableState()
+void RenderableState::clearTextureCache()
 {
     for(auto& texture : textures)
     {
@@ -164,4 +176,9 @@ RenderableState::~RenderableState()
         }
     }
     textures.clear();
+}
+
+RenderableState::~RenderableState()
+{
+    clearTextureCache();
 }
