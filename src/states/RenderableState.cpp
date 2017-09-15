@@ -159,7 +159,6 @@ SDL_Texture* RenderableState::getTexture(SDL_Renderer* renderer, TemplateState* 
             setPixel(paintedSurface, i, newPixelColor);
         }
     }
-    std::cout<<"New texture c: "<<hue<<std::endl;
     ret = SDL_CreateTextureFromSurface(renderer, paintedSurface);
     SDL_FreeSurface(paintedSurface);
     textures.insert(std::pair<std::string, SDL_Texture*>(temp->getSurfaceId(), ret));
