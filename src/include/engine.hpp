@@ -5,7 +5,7 @@
 #include "Renderable.hpp"
 #include "TileMap.hpp"
 #include "State.hpp"
-#include "RenderableState.hpp"
+#include "ColorState.hpp"
 #include "TemplateState.hpp"
 #include "Timer.hpp"
 

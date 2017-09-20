@@ -6,7 +6,7 @@
 #include <string>
 
 #include "StateMachine.hpp"
-#include "RenderableState.hpp"
+#include "ColorState.hpp"
 #include "TemplateState.hpp"
 #include "Window.hpp"
 
@@ -18,22 +18,24 @@
 class Renderable
 {
     public:
-        Renderable(unsigned char r = SPRITE_RENDER);
-        void addRenderState(RenderableState *state);
+        Renderable(Window* w, unsigned char r = SPRITE_RENDER);
+        void addColorState(ColorState *state);
         void addTemplateState(TemplateState *state);
-        void setRenderState(int stateName);
+        void setColorState(int stateName);
         void setTemplateState(int stateName);
-        bool render(Window window);
+        bool render();
         void setRenderPosition(int x, int y);
         void setRenderMode(unsigned char r);
         virtual ~Renderable();
     private:
+        Window* window;
+        bool generateTexture();
+        SDL_Texture *texture;
         unsigned char renderMode;
-        StateMachine<RenderableState> renderStateMachine;
+        StateMachine<ColorState> colorStateMachine;
         StateMachine<TemplateState> templateStateMachine;
-    protected:
         SDL_Rect dest;
-
+        SDL_Rect bounds;
 };
 
 #endif

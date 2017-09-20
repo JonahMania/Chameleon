@@ -65,4 +65,15 @@ HSV rgbToHsv(SDL_Color color);
 unsigned int getColor(unsigned int baseColor, unsigned int ambientColor, double reflectiveness, unsigned int i, unsigned int numColors);
 double getOffset(double p, double upperBound, unsigned int i, unsigned int numColors);
 
+//Compare operator for SDL_Color so that std::map will work
+bool operator<(const SDL_Color& a, const SDL_Color& b);
+//Custom compare used to sort colors
+struct luminanceSort
+{
+    inline bool operator()(const SDL_Color& a, const SDL_Color& b)
+    {
+        return luminance(a) < luminance(b);
+    }
+};
+
 #endif

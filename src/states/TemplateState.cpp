@@ -12,9 +12,8 @@ TemplateState::TemplateState(int n, std::string p, unsigned int scale) : State(n
     }
     bounds.x = 0;
     bounds.y = 0;
-    bounds.w = surface->w;
-    bounds.h = surface->h;
-    surfaceId = std::string(path + "_" + std::to_string(bounds.x) + "_" + std::to_string(bounds.y) + "_" + std::to_string(bounds.w) + "_" + std::to_string(bounds.h));
+    bounds.w = surface->w * scale;
+    bounds.h = surface->h * scale;
 }
 TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, int scale) : State(n)
 {
@@ -36,7 +35,44 @@ TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int 
     bounds.h = h * scale;
     bounds.x = w * scale * x;
     bounds.y = h * scale * y;
-    surfaceId = std::string(path + "_" + std::to_string(bounds.x) + "_" + std::to_string(bounds.y) + "_" + std::to_string(bounds.w) + "_" + std::to_string(bounds.h));
+}
+
+TemplateState::TemplateState(int n, std::string p, std::vector<SDL_Color> k, unsigned int scale) : State(n)
+{
+    path = p;
+    surface = TemplateState::getTemplate(path, scale);
+    if(surface == NULL)
+    {
+        return;
+    }
+    bounds.x = 0;
+    bounds.y = 0;
+    bounds.w = surface->w * scale;
+    bounds.h = surface->h * scale;
+    colorKeys = k;
+}
+
+TemplateState::TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, std::vector<SDL_Color> k, int scale) : State(n)
+{
+    unsigned int numXSprites;
+    unsigned int numYSprites;
+    unsigned int y;
+    unsigned int x;
+    path = p;
+    surface = TemplateState::getTemplate(path, scale);
+    if(surface == NULL)
+    {
+        return;
+    }
+    numXSprites = floor((double)surface->w / (double)(w * scale));
+    numYSprites = floor((double)surface->h / (double)(h * scale));
+    y = floor(i / numXSprites);
+    x = i - (y * numXSprites);
+    bounds.w = w * scale;
+    bounds.h = h * scale;
+    bounds.x = w * scale * x;
+    bounds.y = h * scale * y;
+    colorKeys = k;
 }
 
 SDL_Surface* TemplateState::getTemplate()
@@ -44,9 +80,9 @@ SDL_Surface* TemplateState::getTemplate()
     return surface;
 }
 
-SDL_Rect* TemplateState::getBounds()
+SDL_Rect TemplateState::getBounds()
 {
-    return &bounds;
+    return bounds;
 }
 
 std::string TemplateState::getPath()
@@ -54,9 +90,9 @@ std::string TemplateState::getPath()
     return path;
 }
 
-std::string TemplateState::getSurfaceId()
+std::vector<SDL_Color> TemplateState::getColorKeys()
 {
-    return surfaceId;
+    return colorKeys;
 }
 
 SDL_Surface* TemplateState::getTemplate(std::string p, unsigned int scale)

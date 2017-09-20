@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "State.hpp"
 
@@ -24,10 +25,13 @@ class TemplateState : public State
         * |--------------| in the sprite sheet                  *
         ********************************************************/
         TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, int scale = 1);
+        //Set of constructors for passing color keys by hand
+        TemplateState(int n, std::string p, std::vector<SDL_Color> k, unsigned int scale = 1);
+        TemplateState(int n, std::string p, unsigned int w, unsigned int h, unsigned int i, std::vector<SDL_Color> k, int scale = 1);
         SDL_Surface* getTemplate();
-        SDL_Rect* getBounds();
+        SDL_Rect getBounds();
         std::string getPath();
-        std::string getSurfaceId();
+        std::vector<SDL_Color> getColorKeys();
         static void freeTemplate(std::string p);
         static void freeAllTemplates();
         static std::map<std::string,SDL_Surface*> templates;
@@ -37,7 +41,7 @@ class TemplateState : public State
     private:
         static SDL_Surface* getTemplate(std::string p, unsigned int scale);
         std::string path;
-        std::string surfaceId;
+        std::vector<SDL_Color> colorKeys;
 };
 
 #endif

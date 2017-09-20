@@ -168,3 +168,9 @@ double getOffset(double p, double upperBound, unsigned int i, unsigned int numCo
     double m = upperBound / std::pow((double)numColors - 1, p);
     return m * std::pow((double)i, p);
 }
+
+//Compare operator for SDL_Color so that std::map will work
+bool operator<(const SDL_Color& a, const SDL_Color& b)
+{
+    return luminance(a) < luminance(b);
+}

@@ -13,7 +13,7 @@ template<typename T> class StateMachine
         StateMachine();
         static_assert(std::is_base_of<State, T>::value, "StateMachine type must derive from State");
         void setCurrentState(int stateName);
-        void addState(T* state);
+        unsigned int addState(T* state);
         void freeState(int stateName);
         void freeAllStates();
         T* currentState;
@@ -39,18 +39,21 @@ void StateMachine<T>::setCurrentState(int stateName)
     }
 }
 
+// Inserts a new state and returns the number of total states
 template<typename T>
-void StateMachine<T>::addState(T* state)
+unsigned int StateMachine<T>::addState(T* state)
 {
     if(!states.insert(std::pair<int,T*>(state->getName(),state)).second)
     {
         std::cerr<<"Error: State with name: '"<<state->getName()<<"' already exists in entity"<<std::endl;
-        return;
+        return states.size();
     }
     if(currentState == NULL)
     {
         currentState = state;
     }
+
+    return states.size();
 }
 
 #endif
