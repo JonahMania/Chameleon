@@ -45,7 +45,7 @@ unsigned int TileMap::getMapHeight()
     return floor(map.size() / rowWidth);
 }
 
-bool TileMap::render(int xPos, int yPos)
+void TileMap::render(Window window, int xPos, int yPos)
 {
     int x = 0;
     int y = 0;
@@ -56,7 +56,7 @@ bool TileMap::render(int xPos, int yPos)
         if(tile)
         {
             tile->setRenderPosition(xPos + (x * (int)tileWidth), yPos + (y * (int)tileHeight));
-            tile->render();
+            window.render(tile);
         }
         //Move to next tile position
         x++;

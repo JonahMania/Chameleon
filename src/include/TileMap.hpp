@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Renderable.hpp"
+#include "Window.hpp"
 
 class TileMap
 {
@@ -14,7 +15,7 @@ class TileMap
         Renderable* getTile(unsigned int x, unsigned int y);
         unsigned int getMapWidth();
         unsigned int getMapHeight();
-        bool render(int xPos, int yPos);
+        void render(Window window, int xPos, int yPos);
     private:
         unsigned int rowWidth;
         unsigned int tileWidth;

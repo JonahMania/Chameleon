@@ -3,84 +3,60 @@
 #include "../utils/pixelAccess.hpp"
 #include "../include/Renderable.hpp"
 
-Renderable::Renderable(Window* w, unsigned char r)
+Renderable::Renderable(unsigned char r)
 {
     dest.x = 0;
     dest.y = 0;
     renderMode = r;
     colorStateMachine = StateMachine<ColorState>();
     templateStateMachine = StateMachine<TemplateState>();
-    window = w;
     texture = NULL;
+    regenTexture = true;
 }
 
 void Renderable::addColorState(ColorState *state)
 {
-    if(colorStateMachine.addState(state) == 1)
-    {
-        //If this is the first state we are adding make texture
-        generateTexture();
-    }
+    colorStateMachine.addState(state);
 }
 
 void Renderable::addTemplateState(TemplateState *state)
 {
-    if(templateStateMachine.addState(state) == 1)
+    templateStateMachine.addState(state);
+    if(templateStateMachine.currentState = state)
     {
-        //If this is the first state we are adding make texture
-        generateTexture();
+        //If this is the current state set dest width and height to state
+        dest.w = state->getBounds().w;
+        dest.h = state->getBounds().h;
     }
 }
 
 void Renderable::setColorState(int stateName)
 {
     colorStateMachine.setCurrentState(stateName);
-    //When state changes remake the texture
-    generateTexture();
+    //If we change the template we must recreate the texture
+    regenTexture = true;
 }
 
 void Renderable::setTemplateState(int stateName)
 {
     templateStateMachine.setCurrentState(stateName);
-    //When state changes remake the texture
-    generateTexture();
+    //Reset dest width and height to that of currentState
+    dest.w = templateStateMachine.currentState->getBounds().w;
+    dest.h = templateStateMachine.currentState->getBounds().h;
+    //If we change the template we must recreate the texture
+    regenTexture = true;
 }
 
-bool Renderable::render()
+SDL_Texture* Renderable::getTexture(SDL_Renderer* renderer)
 {
-    SDL_RendererFlip flip;
-
-    if(texture == NULL)
+    //Check if we should regen this texture
+    if(regenTexture)
     {
-        std::cerr<<"Error: Could not render texture is NULL"<<std::endl;
-        return false;
-    }
-    //Make sure we want to render this sprite
-    if((renderMode & SPRITE_NO_RENDER) != SPRITE_NO_RENDER)
-    {
-        //Check if this texture is on the screen if not don't render it
-        if((dest.x + dest.w) > 0 && dest.x < window->getWidth()
-            && (dest.y + dest.h) > 0 && dest.y < window->getHeight())
-        {
-            flip = SDL_FLIP_NONE;
-            if((renderMode & SPRITE_FLIP_X) == SPRITE_FLIP_X)
-            {
-                flip = SDL_FLIP_VERTICAL;
-            }
-            if((renderMode & SPRITE_FLIP_Y) == SPRITE_FLIP_Y)
-            {
-                flip = SDL_FLIP_HORIZONTAL;
-            }
-            if((renderMode & (SPRITE_FLIP_X | SPRITE_FLIP_Y)) == (SPRITE_FLIP_X | SPRITE_FLIP_Y))
-            {
-                flip = (SDL_RendererFlip)(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
-            }
-
-            SDL_RenderCopyEx(window->getRenderer(), texture, &bounds, &dest, 0, NULL, flip);
-        }
+        generateTexture(renderer);
+        regenTexture = false;
     }
 
-    return true;
+    return texture;
 }
 
 void Renderable::setRenderPosition(int x, int y)
@@ -94,7 +70,12 @@ void Renderable::setRenderMode(unsigned char r)
     renderMode = r;
 }
 
-bool Renderable::generateTexture()
+int Renderable::getRenderMode()
+{
+    return renderMode;
+}
+
+bool Renderable::generateTexture(SDL_Renderer* renderer)
 {
     SDL_Color pixelColor;
     SDL_Surface* templateSurface;
@@ -117,24 +98,18 @@ bool Renderable::generateTexture()
     }
 
     templateBounds = templateStateMachine.currentState->getBounds();
+
     //Set bounds struct
-    bounds = templateBounds;
+    bounds.w = templateBounds.w;
+    bounds.h = templateBounds.h;
     bounds.x = 0;
     bounds.y = 0;
-    //Set the destination struct
-    dest.w = bounds.w;
-    dest.h = bounds.h;
 
     //Create a new texture
     if((templateSurface = templateStateMachine.currentState->getTemplate()) == NULL)
     {
         std::cerr<<"Error: Surface is NULL"<<std::endl;
         return false;
-    }
-
-    if(templateSurface == NULL)
-    {
-        std::cout<<"ITS NULL"<<std::endl;
     }
 
     paintedSurface = SDL_CreateRGBSurface(0, bounds.w, bounds.h, 32, 0, 0, 0, 0);
@@ -149,7 +124,7 @@ bool Renderable::generateTexture()
     //If there is no color state just use the unpainted texture
     if(colorStateMachine.currentState == NULL)
     {
-        texture = SDL_CreateTextureFromSurface(window->getRenderer(), paintedSurface);
+        texture = SDL_CreateTextureFromSurface(renderer, paintedSurface);
         SDL_FreeSurface(paintedSurface);
         return true;
     }
@@ -166,9 +141,20 @@ bool Renderable::generateTexture()
             setPixel(paintedSurface, i, newPixelColor);
         }
     }
-    texture = SDL_CreateTextureFromSurface(window->getRenderer(), paintedSurface);
+    texture = SDL_CreateTextureFromSurface(renderer, paintedSurface);
     SDL_FreeSurface(paintedSurface);
+
     return true;
+}
+
+SDL_Rect Renderable::getDest()
+{
+    return dest;
+}
+
+SDL_Rect Renderable::getBounds()
+{
+    return bounds;
 }
 
 Renderable::~Renderable()

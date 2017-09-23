@@ -8,7 +8,6 @@
 #include "StateMachine.hpp"
 #include "ColorState.hpp"
 #include "TemplateState.hpp"
-#include "Window.hpp"
 
 #define SPRITE_RENDER 0
 #define SPRITE_NO_RENDER 1
@@ -18,19 +17,23 @@
 class Renderable
 {
     public:
-        Renderable(Window* w, unsigned char r = SPRITE_RENDER);
+        Renderable(unsigned char r = SPRITE_RENDER);
         void addColorState(ColorState *state);
         void addTemplateState(TemplateState *state);
         void setColorState(int stateName);
         void setTemplateState(int stateName);
-        bool render();
+        // bool render(Window window);
+        SDL_Texture* getTexture(SDL_Renderer* renderer);
         void setRenderPosition(int x, int y);
         void setRenderMode(unsigned char r);
+        int getRenderMode();
+        SDL_Rect getDest();
+        SDL_Rect getBounds();
         virtual ~Renderable();
     private:
-        Window* window;
-        bool generateTexture();
-        SDL_Texture *texture;
+        bool generateTexture(SDL_Renderer* renderer);
+        bool regenTexture;
+        SDL_Texture* texture;
         unsigned char renderMode;
         StateMachine<ColorState> colorStateMachine;
         StateMachine<TemplateState> templateStateMachine;

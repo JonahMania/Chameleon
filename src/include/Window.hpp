@@ -4,6 +4,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <vector>
+
+#include "Renderable.hpp"
 
 class Window
 {
@@ -16,8 +19,8 @@ class Window
         bool clear();
         //Update the latest changes to the screen
         void update();
-        void render(SDL_Texture* texture, const SDL_Rect* src, const SDL_Rect* dest);
-        SDL_Renderer* getRenderer();
+        void render(Renderable* renderable);
+        void render(std::vector<Renderable*> renderables);
         void close();
     private:
         int width;

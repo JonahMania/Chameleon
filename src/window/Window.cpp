@@ -67,14 +67,54 @@ void Window::update()
     SDL_RenderPresent(windowRenderer);
 }
 
-void Window::render(SDL_Texture* texture, const SDL_Rect* src, const SDL_Rect* dest)
+void Window::render(Renderable* renderable)
 {
-    SDL_RenderCopy(windowRenderer, texture, src, dest);
+    SDL_RendererFlip flip;
+    int renderMode = renderable->getRenderMode();
+    SDL_Rect dest = renderable->getDest();
+    SDL_Rect bounds;
+    SDL_Texture* texture;
+
+    //Make sure we want to render this sprite
+    if((renderMode & SPRITE_NO_RENDER) != SPRITE_NO_RENDER)
+    {
+        //Check if this texture is on the screen if not don't render it
+        if((dest.x + dest.w) > 0 && dest.x < width
+            && (dest.y + dest.h) > 0 && dest.y < height)
+        {
+            //Make sure we get the texture only if the renderable is on screen
+            //to avoid unnecessary updates
+            texture = renderable->getTexture(windowRenderer);
+            if(texture ==  NULL)
+            {
+                return;
+            }
+            bounds = renderable->getBounds();
+
+            flip = SDL_FLIP_NONE;
+            if((renderMode & SPRITE_FLIP_X) == SPRITE_FLIP_X)
+            {
+                flip = SDL_FLIP_VERTICAL;
+            }
+            if((renderMode & SPRITE_FLIP_Y) == SPRITE_FLIP_Y)
+            {
+                flip = SDL_FLIP_HORIZONTAL;
+            }
+            if((renderMode & (SPRITE_FLIP_X | SPRITE_FLIP_Y)) == (SPRITE_FLIP_X | SPRITE_FLIP_Y))
+            {
+                flip = (SDL_RendererFlip)(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+            }
+            SDL_RenderCopyEx(windowRenderer, texture, &bounds, &dest, 0, NULL, flip);
+        }
+    }
 }
 
-SDL_Renderer* Window::getRenderer()
+void Window::render(std::vector<Renderable*> renderables)
 {
-    return windowRenderer;
+    for(auto renderable : renderables)
+    {
+        render(renderable);
+    }
 }
 
 void Window::close()
