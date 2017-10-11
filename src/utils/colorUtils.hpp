@@ -1,7 +1,7 @@
 #ifndef _COLORUTILS_HPP_
 #define _COLORUTILS_HPP_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
 #include <math.h>
 #include <algorithm>

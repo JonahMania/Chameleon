@@ -12,9 +12,9 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJEXT))
 
 CC = g++
 AR = ar
-CFLAGS = -g -std=c++11
+CFLAGS = -g -std=c++11 $(shell sdl2-config --cflags)
 ARFLAGS = -rv
-LIB = -lSDL2 -lSDL2_image
+LIB = $(shell sdl2-config --libs) -lSDL2_image
 
 RM = rm -rf
 MD = mkdir -p

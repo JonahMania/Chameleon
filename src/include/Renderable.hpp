@@ -1,7 +1,7 @@
 #ifndef _RENDERABLE_HPP_
 #define _RENDERABLE_HPP_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <map>
 #include <string>
 

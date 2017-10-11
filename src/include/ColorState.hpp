@@ -1,7 +1,7 @@
 #ifndef _COLORSTATE_HPP_
 #define _COLORSTATE_HPP_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
 #include <vector>
 #include <map>
