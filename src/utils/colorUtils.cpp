@@ -174,3 +174,18 @@ bool operator<(const SDL_Color& a, const SDL_Color& b)
 {
     return luminance(a) < luminance(b);
 }
+
+std::set<SDL_Color> getColorKeys(SDL_Surface* surface)
+{
+    std::set<SDL_Color> ret = std::set<SDL_Color>();
+    SDL_Color pixelColor;
+    for(int i = 0; i < surface->w * surface->h; i++)
+    {
+        pixelColor = getPixel(surface, i);
+        if((int)pixelColor.a > 0)
+        {
+            ret.insert(pixelColor);
+        }
+    }
+    return ret;
+}

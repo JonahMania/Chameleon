@@ -5,6 +5,9 @@
 #include <iostream>
 #include <math.h>
 #include <algorithm>
+#include <set>
+
+#include "pixelAccess.hpp"
 
 struct HSV
 {
@@ -75,5 +78,7 @@ struct luminanceSort
         return luminance(a) < luminance(b);
     }
 };
+
+std::set<SDL_Color> getColorKeys(SDL_Surface* surface);
 
 #endif

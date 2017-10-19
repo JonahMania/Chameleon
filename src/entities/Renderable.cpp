@@ -1,166 +1,121 @@
-#include <iostream>
-#include "../utils/colorUtils.hpp"
-#include "../utils/pixelAccess.hpp"
 #include "../include/Renderable.hpp"
 
-Renderable::Renderable(unsigned char r)
+Renderable::Renderable(std::string p, unsigned int s)
 {
-    dest.x = 0;
-    dest.y = 0;
-    renderMode = r;
-    colorStateMachine = StateMachine<ColorState>();
-    templateStateMachine = StateMachine<TemplateState>();
-    texture = NULL;
-    regenTexture = true;
+    path = p;
+    scale = s;
+    //If width and height are set to 0 then the
+    //renderer will use the whole sheet
+    renderWidth = 0;
+    renderHeight = 0;
+    renderPositionX = 0;
+    renderPositionY = 0;
+    sheetPositionX = 0;
+    sheetPositionY = 0;
 }
 
-void Renderable::addColorState(ColorState *state)
+Renderable::Renderable(std::string p, unsigned int w, unsigned int h, unsigned int sx, unsigned int sy, unsigned int s)
 {
-    colorStateMachine.addState(state);
+    path = p;
+    scale = s;
+    renderWidth = w;
+    renderHeight = h;
+    renderPositionX = 0;
+    renderPositionY = 0;
+    sheetPositionX = sx;
+    sheetPositionY = sy;
 }
 
-void Renderable::addTemplateState(TemplateState *state)
+void Renderable::setImagePath(std::string p)
 {
-    templateStateMachine.addState(state);
-    if(templateStateMachine.currentState = state)
-    {
-        //If this is the current state set dest width and height to state
-        dest.w = state->getBounds().w;
-        dest.h = state->getBounds().h;
-    }
+    path = p;
 }
 
-void Renderable::setColorState(int stateName)
+void Renderable::setDimensions(unsigned int w, unsigned int h)
 {
-    colorStateMachine.setCurrentState(stateName);
-    //If we change the template we must recreate the texture
-    regenTexture = true;
-}
-
-void Renderable::setTemplateState(int stateName)
-{
-    templateStateMachine.setCurrentState(stateName);
-    //Reset dest width and height to that of currentState
-    dest.w = templateStateMachine.currentState->getBounds().w;
-    dest.h = templateStateMachine.currentState->getBounds().h;
-    //If we change the template we must recreate the texture
-    regenTexture = true;
-}
-
-SDL_Texture* Renderable::getTexture(SDL_Renderer* renderer)
-{
-    //Check if we should regen this texture
-    if(regenTexture)
-    {
-        generateTexture(renderer);
-        regenTexture = false;
-    }
-
-    return texture;
+    renderWidth = w;
+    renderHeight = h;
 }
 
 void Renderable::setRenderPosition(int x, int y)
 {
-    dest.x = x;
-    dest.y = y;
+    renderPositionX = x;
+    renderPositionY = y;
 }
 
-void Renderable::setRenderMode(unsigned char r)
+void Renderable::setSheetPosition(unsigned int x, unsigned int y)
 {
-    renderMode = r;
+    sheetPositionX = x;
+    sheetPositionY = y;
 }
 
-int Renderable::getRenderMode()
+void Renderable::setScale(unsigned int s)
 {
-    return renderMode;
+    scale = s;
 }
 
-bool Renderable::generateTexture(SDL_Renderer* renderer)
+std::string Renderable::getPath() const
 {
-    SDL_Color pixelColor;
-    SDL_Surface* templateSurface;
-    SDL_Surface* paintedSurface;
-    std::map<SDL_Color, SDL_Color> colorMap;
-    SDL_Texture* ret;
-    SDL_Rect templateBounds;
-
-    //Free old texture
-    if(texture != NULL)
-    {
-        SDL_DestroyTexture(texture);
-    }
-    texture = NULL;
-
-    //If there is no template state make sure that our texture is NULL
-    if(templateStateMachine.currentState == NULL)
-    {
-        return false;
-    }
-
-    templateBounds = templateStateMachine.currentState->getBounds();
-
-    //Set bounds struct
-    bounds.w = templateBounds.w;
-    bounds.h = templateBounds.h;
-    bounds.x = 0;
-    bounds.y = 0;
-
-    //Create a new texture
-    if((templateSurface = templateStateMachine.currentState->getTemplate()) == NULL)
-    {
-        std::cerr<<"Error: Surface is NULL"<<std::endl;
-        return false;
-    }
-
-    paintedSurface = SDL_CreateRGBSurface(0, bounds.w, bounds.h, 32, 0, 0, 0, 0);
-    if(paintedSurface == NULL)
-    {
-        std::cerr<<"Error: Surface is NULL "<<SDL_GetError()<<std::endl;
-        return false;
-    }
-
-    SDL_BlitSurface(templateSurface, &templateBounds, paintedSurface, NULL);
-
-    //If there is no color state just use the unpainted texture
-    if(colorStateMachine.currentState == NULL)
-    {
-        texture = SDL_CreateTextureFromSurface(renderer, paintedSurface);
-        SDL_FreeSurface(paintedSurface);
-        return true;
-    }
-
-    colorMap = colorStateMachine.currentState->generatePalette(templateStateMachine.currentState->getColorKeys());
-
-    //Paint surface
-    for(int i = 0; i < paintedSurface->w * paintedSurface->h; i++)
-    {
-        pixelColor = getPixel(paintedSurface, i);
-        if(colorMap.find(pixelColor) != colorMap.end())
-        {
-            SDL_Color newPixelColor = colorMap.at(pixelColor);
-            setPixel(paintedSurface, i, newPixelColor);
-        }
-    }
-    texture = SDL_CreateTextureFromSurface(renderer, paintedSurface);
-    SDL_FreeSurface(paintedSurface);
-
-    return true;
+    return path;
 }
 
-SDL_Rect Renderable::getDest()
+unsigned int Renderable::getRenderWidth() const
 {
-    return dest;
+    return renderWidth;
 }
 
-SDL_Rect Renderable::getBounds()
+unsigned int Renderable::getRenderHeight() const
 {
-    return bounds;
+    return renderHeight;
+}
+
+int Renderable::getRenderPositionX() const
+{
+    return renderPositionX;
+}
+
+int Renderable::getRenderPositionY() const
+{
+    return renderPositionY;
+}
+
+unsigned int Renderable::getSheetPositionX() const
+{
+    return sheetPositionX;
+}
+
+unsigned int Renderable::getSheetPositionY() const
+{
+    return sheetPositionY;
+}
+
+unsigned int Renderable::getScale() const
+{
+    return scale;
 }
 
 Renderable::~Renderable()
 {
-    if(texture != NULL)
-    {
-        SDL_DestroyTexture(texture);
-    }
+
+}
+
+bool Renderable::operator==(const Renderable &other) const
+{
+    return path == other.path && scale == other.scale &&
+           renderWidth == other.renderWidth && renderHeight == other.renderHeight &&
+           scale == other.scale;
+}
+
+
+std::size_t std::hash<Renderable>::operator()(const Renderable& r) const
+{
+    //Hash each field and combine with each other
+    size_t hash = 17;
+    hash = hash * 31 + std::hash<std::string>{}(r.getPath());
+    hash = hash * 31 + std::hash<unsigned int>{}(r.getRenderWidth());
+    hash = hash * 31 + std::hash<unsigned int>{}(r.getRenderHeight());
+    hash = hash * 31 + std::hash<unsigned int>{}(r.getSheetPositionX());
+    hash = hash * 31 + std::hash<unsigned int>{}(r.getSheetPositionY());
+    hash = hash * 31 + std::hash<unsigned int>{}(r.getScale());
+    return hash;
 }

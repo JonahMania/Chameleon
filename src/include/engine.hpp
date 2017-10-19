@@ -1,12 +1,9 @@
 #ifndef _ENGINE_HPP_
 #define _ENGINE_HPP_
 
-#include "Window.hpp"
+#include "Renderer.hpp"
 #include "Renderable.hpp"
-#include "TileMap.hpp"
-#include "State.hpp"
-#include "ColorState.hpp"
-#include "TemplateState.hpp"
+#include "Colorable.hpp"
 #include "Timer.hpp"
 
 #endif
