@@ -151,6 +151,18 @@ bool Renderer::render(Renderable* renderable)
     std::unordered_map<Renderable, SDL_Texture*>::const_iterator rit;
     std::unordered_map<Colorable, SDL_Texture*>::const_iterator cit;
 
+
+    dest.x = renderable->getRenderPositionX();
+    dest.y = renderable->getRenderPositionY();
+    dest.w = renderable->getRenderWidth() * renderable->getScale();
+    dest.h = renderable->getRenderHeight() * renderable->getScale();
+    //Check if this texture is on the screen if not don't render it
+    if((dest.x + dest.w) < 0 || dest.x > width
+    && (dest.y + dest.h) < 0 || dest.y > height)
+    {
+        return false;
+    }
+
     (void)makeTexture(renderable);
 
     //Check if we have a colorable or a renderable
@@ -178,11 +190,6 @@ bool Renderer::render(Renderable* renderable)
     {
         return false;
     }
-
-    dest.x = renderable->getRenderPositionX();
-    dest.y = renderable->getRenderPositionY();
-    dest.w = renderable->getRenderWidth() * renderable->getScale();
-    dest.h = renderable->getRenderHeight() * renderable->getScale();
 
     bounds.x = 0;
     bounds.y = 0;
