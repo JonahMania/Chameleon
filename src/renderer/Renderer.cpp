@@ -212,7 +212,7 @@ void Renderer::update()
 
 bool Renderer::freeAllSurfaces()
 {
-    for(auto surface : surfaces)
+    for(auto &surface : surfaces)
     {
         if(surface.second)
         {
@@ -225,7 +225,7 @@ bool Renderer::freeAllSurfaces()
 
 bool Renderer::freeAllTextures()
 {
-    for(auto texture : textures)
+    for(auto &texture : textures)
     {
         if(texture.second)
         {
@@ -234,7 +234,7 @@ bool Renderer::freeAllTextures()
         }
     }
     textures.clear();
-    for(auto coloredTexture : coloredTextures)
+    for(auto &coloredTexture : coloredTextures)
     {
         if(coloredTexture.second)
         {
