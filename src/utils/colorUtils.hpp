@@ -9,16 +9,16 @@
 
 #include "pixelAccess.hpp"
 
-struct HSV
+struct HSL
 {
-    HSV()
+    HSL()
     {
         h = 0;
         s = 0;
-        v = 0;
+        l = 0;
     }
 
-    HSV(double hue, double saturation, double value)
+    HSL(double hue, double saturation, double lightness)
     {
         if(hue > 360)
         {
@@ -44,29 +44,29 @@ struct HSV
         {
             s = saturation;
         }
-        if(value > 1)
+        if(lightness > 1)
         {
-            v = 1;
+            l = 1;
         }
-        else if(value < 0)
+        else if(lightness < 0)
         {
-            v = 0;
+            l = 0;
         }
         else
         {
-            v = value;
+            l = lightness;
         }
     }
     double h;
     double s;
-    double v;
+    double l;
 };
 
 double luminance(SDL_Color color);
-SDL_Color hsvToRgb(HSV color);
-HSV rgbToHsv(SDL_Color color);
-unsigned int getColor(unsigned int baseColor, unsigned int ambientColor, double reflectiveness, unsigned int i, unsigned int numColors);
-double getOffset(double p, double upperBound, unsigned int i, unsigned int numColors);
+SDL_Color hslToRgb(HSL color);
+HSL rgbToHsl(SDL_Color color);
+double getColor(double baseColor, unsigned int step, unsigned int i);
+double getOffset(double p, double lowerBound, double upperBound, unsigned int i, unsigned int numColors);
 
 //Compare operator for SDL_Color so that std::map will work
 bool operator<(const SDL_Color& a, const SDL_Color& b);

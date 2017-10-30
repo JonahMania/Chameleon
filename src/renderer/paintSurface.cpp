@@ -3,10 +3,12 @@
 std::map<SDL_Color, SDL_Color> createColorMap(std::set<SDL_Color> colorKeys, Colorable colorable)
 {
     unsigned int numColors = colorKeys.size();
-    unsigned int newColor;
+    double newColor;
     SDL_Color paletteColor;
     std::map<SDL_Color, SDL_Color> colorMap = std::map<SDL_Color, SDL_Color>();
     unsigned int colorIndex = 0;
+    double lowerBound = 0;
+    double upperBound = 0;
 
     if(numColors <= 0)
     {
@@ -15,10 +17,12 @@ std::map<SDL_Color, SDL_Color> createColorMap(std::set<SDL_Color> colorKeys, Col
 
     for(auto colorKey : colorKeys)
     {
-        newColor = getColor(colorable.getHue(), colorable.getAmbientColor(), colorable.getReflectiveness(), colorIndex, numColors);
-        paletteColor = hsvToRgb(HSV(newColor,
-            getOffset(1 - colorable.getSaturation(), 1, colorIndex, numColors),
-            getOffset(1 - colorable.getBrightness(), colorable.getBrightness() * 2, colorIndex, numColors)));
+        newColor = getColor(colorable.getHue(), colorable.getStep(), colorIndex);
+        lowerBound = colorable.getBrightness() - colorable.getReflectiveness() * colorable.getBrightness();
+        upperBound = colorable.getBrightness() + colorable.getReflectiveness() * (1 - colorable.getBrightness());
+        HSL tmp = HSL(newColor, colorable.getSaturation(),
+            getOffset((1 - colorable.getReflectiveness()) * 2, lowerBound, upperBound, colorIndex, numColors));
+        paletteColor = hslToRgb(tmp);
         colorMap.insert(std::pair<SDL_Color,SDL_Color>(colorKey, paletteColor));
         colorIndex++;
     }

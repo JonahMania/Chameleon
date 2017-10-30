@@ -3,8 +3,8 @@
 Colorable::Colorable(std::string p, unsigned int s) : Renderable(p, s)
 {
     hue = 0;
-    ambientColor = 0;
-    saturation = 0;
+    step = 0;
+    saturation = 0.5;
     reflectiveness = 0.5;
     brightness = 0.5;
 }
@@ -12,13 +12,13 @@ Colorable::Colorable(std::string p, unsigned int s) : Renderable(p, s)
 Colorable::Colorable(std::string p, unsigned int w, unsigned int h, unsigned int sx, unsigned int sy, unsigned int s) : Renderable(p, w, h, sx, sy, s)
 {
     hue = 0;
-    ambientColor = 0;
-    saturation = 0;
+    step = 0;
+    saturation = 0.5;
     reflectiveness = 0.5;
     brightness = 0.5;
 }
 
-void Colorable::setHue(unsigned int h)
+void Colorable::setHue(double h)
 {
     if(h > 360)
     {
@@ -28,13 +28,13 @@ void Colorable::setHue(unsigned int h)
     }
 }
 
-void Colorable::setAmbientColor(unsigned int ac)
+void Colorable::setStep(double s)
 {
-    if(ac > 360)
+    if(s > 360)
     {
-        ambientColor = 360;
+        step = 360;
     }else{
-        ambientColor = ac;
+        step = s;
     }
 }
 
@@ -72,14 +72,14 @@ void Colorable::setBrightness(double b)
     }
 }
 
-unsigned int Colorable::getHue() const
+double Colorable::getHue() const
 {
     return hue;
 }
 
-unsigned int Colorable::getAmbientColor() const
+double Colorable::getStep() const
 {
-    return ambientColor;
+    return step;
 }
 
 double Colorable::getSaturation() const
@@ -112,8 +112,8 @@ std::size_t std::hash<Colorable>::operator()(const Colorable& c) const
     hash = hash * 31 + std::hash<unsigned int>{}(c.getSheetPositionX());
     hash = hash * 31 + std::hash<unsigned int>{}(c.getSheetPositionY());
     hash = hash * 31 + std::hash<unsigned int>{}(c.getScale());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getHue());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getAmbientColor());
+    hash = hash * 31 + std::hash<double>{}(c.getHue());
+    hash = hash * 31 + std::hash<double>{}(c.getStep());
     hash = hash * 31 + std::hash<double>{}(c.getSaturation());
     hash = hash * 31 + std::hash<double>{}(c.getReflectiveness());
     hash = hash * 31 + std::hash<double>{}(c.getBrightness());
