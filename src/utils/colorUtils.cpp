@@ -116,39 +116,8 @@ HSL rgbToHsl(SDL_Color color)
     return ret;
 }
 
-//TODO REMOVE COMMENT
-/*************************************
-*    |                               *
-* 180 - - - - - - - - - - - -        *
-*    |                               *
-* 100 - - - - - - -X- <------- diff  *
-*    |                               *
-*    |          X                    *
-*    |      X                        *
-*  0 | X______________________       *
-*      0   1    2   3  <------- i    *
-*                                    *
-*             y = mx^p               *
-*************************************/
 double getColor(double baseColor, unsigned int step, unsigned int i)
 {
-    // unsigned int diffA = abs((int)ambientColor - (int)baseColor);
-    // unsigned int diffB = std::min(baseColor, ambientColor) + (360 - std::max(baseColor, ambientColor));
-    // unsigned int diff = std::min(diffA, diffB);
-    // //Value to adjust how step of a curve we want range 0 - 2
-    // const double p = (1 - reflectiveness) * 2;
-    //
-    // //Solve for m
-    // double m = diff / std::pow((double)numColors, p);
-    // int newColor;
-    //
-    // if(diffA < diffB || baseColor > 360 / 2)
-    // {
-    //     newColor = round((double)baseColor + (m * std::pow((double)i, p)));
-    // }else{
-    //     newColor = round((double)baseColor - (m * std::pow((double)i, p)));
-    // }
-
     double newColor;
 
     newColor = baseColor + (step * i);
