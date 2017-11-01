@@ -1,4 +1,5 @@
 #include "paintSurface.hpp"
+#include "generateShapeTexture.hpp"
 #include "../utils/colorUtils.hpp"
 #include "../include/Renderer.hpp"
 
@@ -15,27 +16,27 @@ bool Renderer::initialize()
     //Initialize SDL library
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
-        std::cerr << "ERROR: SDL could not initialize " << SDL_GetError() << std::endl;
+        std::cerr<<"ERROR: SDL could not initialize "<<SDL_GetError()<<std::endl;
         return false;
     }
     //Create window
     window = SDL_CreateWindow("colorGen", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
     if(window == NULL)
     {
-        std::cerr << "ERROR: Window was not created " << SDL_GetError() << std::endl;
+        std::cerr<<"ERROR: Window was not created "<<SDL_GetError()<<std::endl;
         return false;
     }
     //Create rendering context for window
     windowRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
     if(windowRenderer == NULL)
     {
-        std::cerr << "ERROR: renderer cound not be created " << SDL_GetError() << std::endl;
+        std::cerr<<"ERROR: renderer cound not be created "<<SDL_GetError()<<std::endl;
         return false;
     }
     //Initilize PNG loading
     if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
-        std::cerr << "ERROR: PNG loading was not initilized " << IMG_GetError() << std::endl;
+        std::cerr<<"ERROR: PNG loading was not initilized "<<IMG_GetError()<<std::endl;
         return false;
     }
 
@@ -72,6 +73,7 @@ bool Renderer::makeTexture(Renderable* renderable)
 {
     Sprite* sprite;
     Colorable* colorable;
+    Shape* shape;
     SDL_Surface* imageSurface;
     SDL_Surface* surface;
     SDL_Texture* texture;
@@ -81,6 +83,24 @@ bool Renderer::makeTexture(Renderable* renderable)
     {
         return false;
     }
+    //If the texture already exists dont remake it
+    if(textures.find(renderable->getId()) != textures.end())
+    {
+        return true;
+    }
+    //If we have  a shape generate, insert and return
+    shape = dynamic_cast<Shape*>(renderable);
+    if(shape != NULL)
+    {
+        texture = generateShapeTexture(shape, windowRenderer);
+        if(texture == NULL)
+        {
+            return false;
+        }
+        textures.insert(std::pair<std::string, SDL_Texture*>(shape->getId(), texture));
+        return true;
+    }
+
     //Check if we have a sprite
     sprite = dynamic_cast<Sprite*>(renderable);
     //If we don't have at least a sprite we cannot create a texture
@@ -90,12 +110,6 @@ bool Renderer::makeTexture(Renderable* renderable)
     }
     //Check if we have a colorable or a renderable
     colorable = dynamic_cast<Colorable*>(renderable);
-
-    //If the texture already exists dont remake it
-    if(textures.find(sprite->getId()) != textures.end())
-    {
-        return true;
-    }
 
     imageSurface = getSurface(sprite->getPath());
     if(imageSurface == NULL)

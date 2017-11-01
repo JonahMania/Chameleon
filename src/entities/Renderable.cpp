@@ -30,8 +30,8 @@ void Renderable::setRenderPosition(int x, int y)
 
 std::string Renderable::getId() const
 {
-    return std::to_string(renderWidth) + "_" +
-        std::to_string(renderHeight) + "_";
+    return std::to_string(renderWidth) + ":" +
+        std::to_string(renderHeight);
 }
 
 unsigned int Renderable::getRenderWidth() const

@@ -34,10 +34,10 @@ void Sprite::setScale(unsigned int s)
 
 std::string Sprite::getId() const
 {
-    return path + "_" +
-        std::to_string(sheetPositionX) + "_" +
-        std::to_string(sheetPositionY) + "_" +
-        Renderable::getId() + "_" +
+    return path + ":" +
+        std::to_string(sheetPositionX) + ":" +
+        std::to_string(sheetPositionY) + ":" +
+        Renderable::getId() + ":" +
         std::to_string(scale);
 }
 

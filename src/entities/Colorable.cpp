@@ -74,11 +74,11 @@ void Colorable::setBrightness(double b)
 
 std::string Colorable::getId() const
 {
-    return Sprite::getId() + "_" +
-        std::to_string(hue) + "_" +
-        std::to_string(step) + "_" +
-        std::to_string(saturation) + "_" +
-        std::to_string(reflectiveness) + "_" +
+    return Sprite::getId() + ":" +
+        std::to_string(hue) + ":" +
+        std::to_string(step) + ":" +
+        std::to_string(saturation) + ":" +
+        std::to_string(reflectiveness) + ":" +
         std::to_string(brightness);
 }
 
