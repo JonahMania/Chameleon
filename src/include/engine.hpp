@@ -4,6 +4,7 @@
 #include "Renderer.hpp"
 #include "Renderable.hpp"
 #include "Colorable.hpp"
+#include "Mask.hpp"
 #include "Timer.hpp"
 
 #endif

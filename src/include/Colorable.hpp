@@ -1,9 +1,9 @@
 #ifndef _COLORABLE_HPP_
 #define _COLORABLE_HPP_
 
-#include "Renderable.hpp"
+#include "Sprite.hpp"
 
-class Colorable : public Renderable
+class Colorable : public Sprite
 {
     public:
         Colorable(std::string p, unsigned int s = 1);
@@ -13,6 +13,7 @@ class Colorable : public Renderable
         void setSaturation(double s);
         void setReflectiveness(double r);
         void setBrightness(double b);
+        std::string getId() const;
         double getHue() const;
         double getStep() const;
         double getSaturation() const;
@@ -26,15 +27,5 @@ class Colorable : public Renderable
         double reflectiveness;
         double brightness;
 };
-
-//Specialized hash function for Colorable
-namespace std
-{
-    template <>
-    struct hash<Colorable>
-    {
-        std::size_t operator()(const Colorable& colorable) const;
-    };
-}
 
 #endif

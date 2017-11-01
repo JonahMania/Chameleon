@@ -7,7 +7,7 @@ Renderer::Renderer(int w, int h)
     width = w;
     height = h;
     windowRect = {0, 0, width, height};
-    textures = std::unordered_map<Renderable, SDL_Texture*>();
+    textures = std::unordered_map<std::string, SDL_Texture*>();
 }
 
 bool Renderer::initialize()
@@ -70,6 +70,7 @@ SDL_Surface* Renderer::getSurface(std::string path)
 
 bool Renderer::makeTexture(Renderable* renderable)
 {
+    Sprite* sprite;
     Colorable* colorable;
     SDL_Surface* imageSurface;
     SDL_Surface* surface;
@@ -80,26 +81,29 @@ bool Renderer::makeTexture(Renderable* renderable)
     {
         return false;
     }
+    //Check if we have a sprite
+    sprite = dynamic_cast<Sprite*>(renderable);
+    //If we don't have at least a sprite we cannot create a texture
+    if(sprite == NULL)
+    {
+        return false;
+    }
     //Check if we have a colorable or a renderable
     colorable = dynamic_cast<Colorable*>(renderable);
 
     //If the texture already exists dont remake it
-    if(!colorable && textures.find(*renderable) != textures.end())
-    {
-        return true;
-    }
-    if(colorable && coloredTextures.find(*colorable) != coloredTextures.end())
+    if(textures.find(sprite->getId()) != textures.end())
     {
         return true;
     }
 
-    imageSurface = getSurface(renderable->getPath());
+    imageSurface = getSurface(sprite->getPath());
     if(imageSurface == NULL)
     {
         return false;
     }
 
-    surface = SDL_CreateRGBSurface(0, renderable->getRenderWidth() * renderable->getScale(), renderable->getRenderHeight() * renderable->getScale(), 32, 0, 0, 0, 0);
+    surface = SDL_CreateRGBSurface(0, sprite->getRenderWidth() * sprite->getScale(), sprite->getRenderHeight() * sprite->getScale(), 32, 0, 0, 0, 0);
     if(surface == NULL)
     {
         std::cerr<<"Error: Surface is NULL "<<SDL_GetError()<<std::endl;
@@ -107,10 +111,10 @@ bool Renderer::makeTexture(Renderable* renderable)
     }
 
     //Find the position of sprite sheet we want to use
-    bounds.w = renderable->getRenderWidth();
-    bounds.h = renderable->getRenderHeight();
-    bounds.x = renderable->getSheetPositionX();
-    bounds.y = renderable->getSheetPositionY();
+    bounds.w = sprite->getRenderWidth();
+    bounds.h = sprite->getRenderHeight();
+    bounds.x = sprite->getSheetPositionX();
+    bounds.y = sprite->getSheetPositionY();
 
     if(SDL_BlitScaled(imageSurface, &bounds, surface, NULL) < 0)
     {
@@ -132,30 +136,32 @@ bool Renderer::makeTexture(Renderable* renderable)
         return false;
     }
 
-    if(colorable)
-    {
-        coloredTextures.insert(std::pair<Colorable, SDL_Texture*>(*colorable, texture));
-    }else{
-        textures.insert(std::pair<Renderable, SDL_Texture*>(*renderable, texture));
-    }
+    textures.insert(std::pair<std::string, SDL_Texture*>(sprite->getId(), texture));
+
     SDL_FreeSurface(surface);
     return true;
 }
 
 bool Renderer::render(Renderable* renderable)
 {
-    Colorable* colorable;
+    Sprite* sprite;
     SDL_Texture* texture;
     SDL_Rect dest;
     SDL_Rect bounds;
-    std::unordered_map<Renderable, SDL_Texture*>::const_iterator rit;
-    std::unordered_map<Colorable, SDL_Texture*>::const_iterator cit;
+    std::unordered_map<std::string, SDL_Texture*>::const_iterator it;
 
+    sprite = dynamic_cast<Sprite*>(renderable);
 
     dest.x = renderable->getRenderPositionX();
     dest.y = renderable->getRenderPositionY();
-    dest.w = renderable->getRenderWidth() * renderable->getScale();
-    dest.h = renderable->getRenderHeight() * renderable->getScale();
+    dest.w = renderable->getRenderWidth();
+    dest.h = renderable->getRenderHeight();
+    //If we have a sprite multiply by scale
+    if(sprite != NULL)
+    {
+        dest.w *= sprite->getScale();
+        dest.h *= sprite->getScale();
+    }
     //Check if this texture is on the screen if not don't render it
     if((dest.x + dest.w) < 0 || dest.x > width
     && (dest.y + dest.h) < 0 || dest.y > height)
@@ -165,26 +171,12 @@ bool Renderer::render(Renderable* renderable)
 
     (void)makeTexture(renderable);
 
-    //Check if we have a colorable or a renderable
-    colorable = dynamic_cast<Colorable*>(renderable);
-
-    if(colorable)
+    it = textures.find(renderable->getId());
+    if(it == textures.end())
     {
-        cit = coloredTextures.find(*colorable);
-        if(cit == coloredTextures.end())
-        {
-            return false;
-        }
-        texture = cit->second;
-    }else{
-        rit = textures.find(*renderable);
-        if(rit == textures.end())
-        {
-            return false;
-        }
-        texture = rit->second;
+        return false;
     }
-
+    texture = it->second;
 
     if(texture == NULL)
     {
@@ -223,7 +215,7 @@ bool Renderer::freeAllSurfaces()
     {
         if(surface.second)
         {
-            std::cout<<"FREEING SURFACE"<<std::endl;
+            std::cout<<"FREEING SURFACE "<<surface.first<<std::endl;
             SDL_FreeSurface(surface.second);
         }
     }
@@ -236,20 +228,11 @@ bool Renderer::freeAllTextures()
     {
         if(texture.second)
         {
-            std::cout<<"FREEING TEXTURE"<<std::endl;
+            std::cout<<"FREEING TEXTURE "<<texture.first<<std::endl;
             SDL_DestroyTexture(texture.second);
         }
     }
     textures.clear();
-    for(auto &coloredTexture : coloredTextures)
-    {
-        if(coloredTexture.second)
-        {
-            std::cout<<"FREEING COLORED TEXTURE"<<std::endl;
-            SDL_DestroyTexture(coloredTexture.second);
-        }
-    }
-    coloredTextures.clear();
 }
 
 bool Renderer::freeAll()

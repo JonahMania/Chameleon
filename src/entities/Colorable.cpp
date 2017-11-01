@@ -1,6 +1,6 @@
 #include "../include/Colorable.hpp"
 
-Colorable::Colorable(std::string p, unsigned int s) : Renderable(p, s)
+Colorable::Colorable(std::string p, unsigned int s) : Sprite(p, s)
 {
     hue = 0;
     step = 0;
@@ -9,7 +9,7 @@ Colorable::Colorable(std::string p, unsigned int s) : Renderable(p, s)
     brightness = 0.5;
 }
 
-Colorable::Colorable(std::string p, unsigned int w, unsigned int h, unsigned int sx, unsigned int sy, unsigned int s) : Renderable(p, w, h, sx, sy, s)
+Colorable::Colorable(std::string p, unsigned int w, unsigned int h, unsigned int sx, unsigned int sy, unsigned int s) : Sprite(p, w, h, sx, sy, s)
 {
     hue = 0;
     step = 0;
@@ -72,6 +72,17 @@ void Colorable::setBrightness(double b)
     }
 }
 
+std::string Colorable::getId() const
+{
+    return Sprite::getId() + "_" +
+        std::to_string(hue) + "_" +
+        std::to_string(step) + "_" +
+        std::to_string(saturation) + "_" +
+        std::to_string(reflectiveness) + "_" +
+        std::to_string(brightness);
+}
+
+
 double Colorable::getHue() const
 {
     return hue;
@@ -100,22 +111,4 @@ double Colorable::getBrightness() const
 Colorable::~Colorable()
 {
 
-}
-
-std::size_t std::hash<Colorable>::operator()(const Colorable& c) const
-{
-    //Hash each field and combine with each other
-    size_t hash = 17;
-    hash = hash * 31 + std::hash<std::string>{}(c.getPath());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getRenderWidth());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getRenderHeight());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getSheetPositionX());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getSheetPositionY());
-    hash = hash * 31 + std::hash<unsigned int>{}(c.getScale());
-    hash = hash * 31 + std::hash<double>{}(c.getHue());
-    hash = hash * 31 + std::hash<double>{}(c.getStep());
-    hash = hash * 31 + std::hash<double>{}(c.getSaturation());
-    hash = hash * 31 + std::hash<double>{}(c.getReflectiveness());
-    hash = hash * 31 + std::hash<double>{}(c.getBrightness());
-    return hash;
 }

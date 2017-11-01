@@ -37,8 +37,7 @@ class Renderer
         SDL_Surface* getSurface(std::string path);
         std::unordered_map<std::string, std::set<SDL_Color>> colorKeys;
         std::unordered_map<std::string, SDL_Surface*> surfaces;
-        std::unordered_map<Renderable, SDL_Texture*> textures;
-        std::unordered_map<Colorable, SDL_Texture*> coloredTextures;
+        std::unordered_map<std::string, SDL_Texture*> textures;
 };
 
 #endif
