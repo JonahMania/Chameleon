@@ -1,5 +1,5 @@
 #include "paintSurface.hpp"
-#include "generateShapeTexture.hpp"
+#include "generateTexture.hpp"
 #include "../utils/colorUtils.hpp"
 #include "../include/Renderer.hpp"
 
@@ -8,39 +8,7 @@ Renderer::Renderer(int w, int h)
     width = w;
     height = h;
     windowRect = {0, 0, width, height};
-    textures = std::unordered_map<std::string, SDL_Texture*>();
-}
-
-bool Renderer::initialize()
-{
-    //Initialize SDL library
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr<<"ERROR: SDL could not initialize "<<SDL_GetError()<<std::endl;
-        return false;
-    }
-    //Create window
-    window = SDL_CreateWindow("colorGen", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN);
-    if(window == NULL)
-    {
-        std::cerr<<"ERROR: Window was not created "<<SDL_GetError()<<std::endl;
-        return false;
-    }
-    //Create rendering context for window
-    windowRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
-    if(windowRenderer == NULL)
-    {
-        std::cerr<<"ERROR: renderer cound not be created "<<SDL_GetError()<<std::endl;
-        return false;
-    }
-    //Initilize PNG loading
-    if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
-    {
-        std::cerr<<"ERROR: PNG loading was not initilized "<<IMG_GetError()<<std::endl;
-        return false;
-    }
-
-    return true;
+    // textures = std::unordered_map<std::string, GLuint*>();
 }
 
 SDL_Surface* Renderer::getSurface(std::string path)
@@ -76,7 +44,7 @@ bool Renderer::makeTexture(Renderable* renderable)
     Shape* shape;
     SDL_Surface* imageSurface;
     SDL_Surface* surface;
-    SDL_Texture* texture;
+    GLuint texture;
     SDL_Rect bounds;
 
     if(renderable == NULL)
@@ -92,12 +60,12 @@ bool Renderer::makeTexture(Renderable* renderable)
     shape = dynamic_cast<Shape*>(renderable);
     if(shape != NULL)
     {
-        texture = generateShapeTexture(shape, windowRenderer);
-        if(texture == NULL)
+        texture = generateShapeTexture(shape);
+        if(texture == 0)
         {
             return false;
         }
-        textures.insert(std::pair<std::string, SDL_Texture*>(shape->getId(), texture));
+        textures.insert(std::pair<std::string, GLuint>(shape->getId(), texture));
         return true;
     }
 
@@ -142,15 +110,11 @@ bool Renderer::makeTexture(Renderable* renderable)
         (void)paintSurface(surface, *colorable, colorKeys[colorable->getPath()]);
     }
 
-    texture = SDL_CreateTextureFromSurface(windowRenderer, surface);
-
-    if(texture == NULL)
+    texture = surfaceToTexture(surface);
+    if(texture > 0)
     {
-        SDL_FreeSurface(surface);
-        return false;
+        textures.insert(std::pair<std::string, GLuint>(sprite->getId(), texture));
     }
-
-    textures.insert(std::pair<std::string, SDL_Texture*>(sprite->getId(), texture));
 
     SDL_FreeSurface(surface);
     return true;
@@ -159,10 +123,9 @@ bool Renderer::makeTexture(Renderable* renderable)
 bool Renderer::render(Renderable* renderable)
 {
     Sprite* sprite;
-    SDL_Texture* texture;
+    GLuint texture;
     SDL_Rect dest;
-    SDL_Rect bounds;
-    std::unordered_map<std::string, SDL_Texture*>::const_iterator it;
+    std::unordered_map<std::string, GLuint>::const_iterator it;
 
     sprite = dynamic_cast<Sprite*>(renderable);
 
@@ -192,35 +155,30 @@ bool Renderer::render(Renderable* renderable)
     }
     texture = it->second;
 
-    if(texture == NULL)
+    if(texture < 1)
     {
         return false;
     }
 
-    bounds.x = 0;
-    bounds.y = 0;
-    bounds.w = dest.w;
-    bounds.h = dest.h;
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    SDL_RenderCopyEx(windowRenderer, texture, &bounds, &dest, 0, NULL, SDL_FLIP_NONE);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0, 0); glVertex3f(dest.x, dest.y, 0);
+        glTexCoord2f(1, 0); glVertex3f(dest.x + dest.w, dest.y, 0);
+        glTexCoord2f(1, 1); glVertex3f(dest.x + dest.w, dest.y + dest.h, 0);
+        glTexCoord2f(0, 1); glVertex3f(dest.x, dest.y + dest.h, 0);
+    glEnd();
 }
 
 bool Renderer::clear()
 {
-    if(SDL_SetRenderDrawColor(windowRenderer, 0, 0, 0, 0xFF) != 0)
-    {
-        return false;
-    }
-    if(SDL_RenderClear(windowRenderer) != 0)
-    {
-        return false;
-    }
+    glClear(GL_COLOR_BUFFER_BIT);
     return true;
 }
 
 void Renderer::update()
 {
-    SDL_RenderPresent(windowRenderer);
+    SDL_GL_SwapWindow(window);
 }
 
 bool Renderer::freeAllSurfaces()
@@ -240,10 +198,10 @@ bool Renderer::freeAllTextures()
 {
     for(auto &texture : textures)
     {
-        if(texture.second)
+        if(texture.second != 0)
         {
             std::cout<<"FREEING TEXTURE "<<texture.first<<std::endl;
-            SDL_DestroyTexture(texture.second);
+            glDeleteTextures(1, &texture.second);
         }
     }
     textures.clear();
@@ -258,8 +216,6 @@ Renderer::~Renderer()
 {
     std::cout<<"FREEING RENDERER"<<std::endl;
     freeAll();
-    SDL_DestroyRenderer(windowRenderer);
-    windowRenderer = NULL;
     SDL_DestroyWindow(window);
     window = NULL;
 }

@@ -3,6 +3,8 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_opengl.h>
+#include <GL/glu.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -31,13 +33,13 @@ class Renderer
         //Dimensions of the window
         int width;
         int height;
-        SDL_Renderer* windowRenderer;
+        SDL_GLContext context;
         SDL_Window* window;
         SDL_Rect windowRect;
         SDL_Surface* getSurface(std::string path);
         std::unordered_map<std::string, std::set<SDL_Color>> colorKeys;
         std::unordered_map<std::string, SDL_Surface*> surfaces;
-        std::unordered_map<std::string, SDL_Texture*> textures;
+        std::unordered_map<std::string, GLuint> textures;
 };
 
 #endif

@@ -1,4 +1,46 @@
-#include "generateShapeTexture.hpp"
+#include "generateTexture.hpp"
+
+GLuint surfaceToTexture(SDL_Surface* surface)
+{
+    GLuint texture;
+    int mode;
+
+    glGenTextures(1, &texture);
+
+    if(texture < 1)
+    {
+        std::cout<<"Error: Could not create texture "<<glGetError()<<std::endl;
+        return 0;
+    }
+
+    mode = GL_RGB;
+    if(surface->format->BytesPerPixel == 4)
+    {
+        if(surface->format->Rmask == 0x000000ff)
+        {
+            mode = GL_RGBA;
+        }else{
+            mode = GL_BGRA;
+        }
+    }else if (surface->format->BytesPerPixel == 3){
+        if(surface->format->Rmask == 0x000000ff)
+        {
+            mode = GL_RGB;
+        }else{
+            mode = GL_BGR;
+        }
+    }else{
+        std::cout<<"Error: Cannot get mode for surface "<<std::endl;
+        return 0;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return texture;
+}
 
 bool inPolygon(std::vector<SDL_Point> points, int testX, int testY)
 {
@@ -18,10 +60,10 @@ bool inPolygon(std::vector<SDL_Point> points, int testX, int testY)
     return ret;
 }
 
-SDL_Texture* generateShapeTexture(Shape* shape, SDL_Renderer* windowRenderer)
+GLuint generateShapeTexture(Shape* shape)
 {
+    GLuint texture;
     SDL_Surface* surface;
-    SDL_Texture* texture;
     SDL_Color backgroundColor;
 
     backgroundColor.r = 0;
@@ -32,14 +74,14 @@ SDL_Texture* generateShapeTexture(Shape* shape, SDL_Renderer* windowRenderer)
     if(shape->getNumPoints() < 3)
     {
         std::cerr<<"Error: Cannot create shape texture with less then 3 points"<<std::endl;
-        return NULL;
+        return 0;
     }
 
     surface = SDL_CreateRGBSurface(0, shape->getRenderWidth(), shape->getRenderHeight(), 32, 0, 0, 0, 0);
     if(surface == NULL)
     {
         std::cerr<<"Error: Could not create surface "<<SDL_GetError()<<std::endl;
-        return NULL;
+        return 0;
     }
 
     if(SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_ADD) != 0)
@@ -61,11 +103,7 @@ SDL_Texture* generateShapeTexture(Shape* shape, SDL_Renderer* windowRenderer)
         }
     }
 
-    texture = SDL_CreateTextureFromSurface(windowRenderer, surface);
-    if(texture == NULL)
-    {
-        std::cerr<<"Error: Could not create texture "<<SDL_GetError()<<std::endl;
-    }
+    texture = surfaceToTexture(surface);
     SDL_FreeSurface(surface);
     return texture;
 }
