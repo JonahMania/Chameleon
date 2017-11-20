@@ -1,9 +1,12 @@
 #ifndef _RENDERER_HPP_
 #define _RENDERER_HPP_
 
+#define GL_GLEXT_PROTOTYPES
+
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
+#include <GL/gl.h>
 #include <GL/glu.h>
 #include <iostream>
 #include <string>
@@ -13,6 +16,8 @@
 
 #include "Renderable.hpp"
 #include "Colorable.hpp"
+#include "MaskShader.hpp"
+#include "BasicShader.hpp"
 
 class Renderer
 {
@@ -20,7 +25,7 @@ class Renderer
         Renderer(int w, int h);
         bool initialize();
         bool makeTexture(Renderable* renderable);
-        bool render(Renderable* renderable);
+        bool render(Renderable* renderable, Renderable* mask = NULL);
         //Clear the screen to black
         bool clear();
         //Update the latest changes to the screen
@@ -40,6 +45,9 @@ class Renderer
         std::unordered_map<std::string, std::set<SDL_Color>> colorKeys;
         std::unordered_map<std::string, SDL_Surface*> surfaces;
         std::unordered_map<std::string, GLuint> textures;
+        //Shaders
+        BasicShader basicShader;
+        MaskShader maskShader;
 };
 
 #endif

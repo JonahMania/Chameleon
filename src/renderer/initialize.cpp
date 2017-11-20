@@ -40,10 +40,16 @@ bool Renderer::initialize()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glDisable(GL_LIGHTING);
 
     //Enable 2d textures
     glEnable(GL_TEXTURE_2D);
+
+    glClearColor(0,0,0,1);
+
+    //Enable blending
+    // glEnable(GL_BLEND);
+    // glDisable(GL_DEPTH_TEST);
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Use Vsync
     if(SDL_GL_SetSwapInterval(1) < 0)
@@ -55,6 +61,16 @@ bool Renderer::initialize()
     if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
         std::cerr<<"ERROR: PNG loading was not initilized "<<IMG_GetError()<<std::endl;
+        return false;
+    }
+
+    if(!basicShader.load())
+    {
+        return false;
+    }
+
+    if(!maskShader.load())
+    {
         return false;
     }
 

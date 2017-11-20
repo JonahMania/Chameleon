@@ -8,7 +8,6 @@ Renderer::Renderer(int w, int h)
     width = w;
     height = h;
     windowRect = {0, 0, width, height};
-    // textures = std::unordered_map<std::string, GLuint*>();
 }
 
 SDL_Surface* Renderer::getSurface(std::string path)
@@ -120,10 +119,11 @@ bool Renderer::makeTexture(Renderable* renderable)
     return true;
 }
 
-bool Renderer::render(Renderable* renderable)
+bool Renderer::render(Renderable* renderable, Renderable* mask)
 {
     Sprite* sprite;
     GLuint texture;
+    GLuint maskTexture;
     SDL_Rect dest;
     std::unordered_map<std::string, GLuint>::const_iterator it;
 
@@ -160,14 +160,51 @@ bool Renderer::render(Renderable* renderable)
         return false;
     }
 
-    glBindTexture(GL_TEXTURE_2D, texture);
+    if(mask != NULL && maskShader.bind())
+    {
+        (void)makeTexture(mask);
 
-    glBegin(GL_QUADS);
-        glTexCoord2f(0, 0); glVertex3f(dest.x, dest.y, 0);
-        glTexCoord2f(1, 0); glVertex3f(dest.x + dest.w, dest.y, 0);
-        glTexCoord2f(1, 1); glVertex3f(dest.x + dest.w, dest.y + dest.h, 0);
-        glTexCoord2f(0, 1); glVertex3f(dest.x, dest.y + dest.h, 0);
-    glEnd();
+        it = textures.find(mask->getId());
+        if(it == textures.end())
+        {
+            return false;
+        }
+        maskTexture = it->second;
+
+        if(maskTexture < 1)
+        {
+            return false;
+        }
+        //Render wih mask
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, maskTexture);
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0, 0); glVertex2f(dest.x, dest.y);
+            glTexCoord2f(1, 0); glVertex2f(dest.x + dest.w, dest.y);
+            glTexCoord2f(1, 1); glVertex2f(dest.x + dest.w, dest.y + dest.h);
+            glTexCoord2f(0, 1); glVertex2f(dest.x, dest.y + dest.h);
+        glEnd();
+
+        maskShader.unbind();
+    }else if(basicShader.bind()){
+        //Render without mask
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glBegin(GL_QUADS);
+            glTexCoord2f(0, 0); glVertex2f(dest.x, dest.y);
+            glTexCoord2f(1, 0); glVertex2f(dest.x + dest.w, dest.y);
+            glTexCoord2f(1, 1); glVertex2f(dest.x + dest.w, dest.y + dest.h);
+            glTexCoord2f(0, 1); glVertex2f(dest.x, dest.y + dest.h);
+        glEnd();
+
+        basicShader.unbind();
+    }
+
 }
 
 bool Renderer::clear()
@@ -217,5 +254,7 @@ Renderer::~Renderer()
     std::cout<<"FREEING RENDERER"<<std::endl;
     freeAll();
     SDL_DestroyWindow(window);
+    maskShader.freeShader();
+    basicShader.freeShader();
     window = NULL;
 }
