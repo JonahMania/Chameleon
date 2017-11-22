@@ -26,7 +26,7 @@ bool MaskShader::load()
         "void main() {"
             "vec4 color = texture2D(texture, vTexCoord);"
             "vec4 maskColor  = texture2D(mask, vTexCoord);"
-            "gl_FragColor = color.rgba * (1.0 - maskColor.a);"
+            "gl_FragColor = color;"
         "}"
    };
 

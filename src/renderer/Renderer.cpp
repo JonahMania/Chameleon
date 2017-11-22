@@ -175,7 +175,7 @@ bool Renderer::render(Renderable* renderable, Renderable* mask)
         {
             return false;
         }
-        //Render wih mask
+        //Render with mask
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 

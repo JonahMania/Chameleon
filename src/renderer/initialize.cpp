@@ -47,9 +47,9 @@ bool Renderer::initialize()
     glClearColor(0,0,0,1);
 
     //Enable blending
-    // glEnable(GL_BLEND);
-    // glDisable(GL_DEPTH_TEST);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    glDisable(GL_DEPTH_TEST);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     //Use Vsync
     if(SDL_GL_SetSwapInterval(1) < 0)
