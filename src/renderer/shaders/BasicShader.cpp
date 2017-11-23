@@ -12,7 +12,7 @@ bool BasicShader::load()
     {
         "varying vec2 vTexCoord;"
         "void main(void){"
-            "vTexCoord = gl_MultiTexCoord0;"
+            "vTexCoord = vec2(gl_MultiTexCoord0.x, gl_MultiTexCoord0.y);"
             "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;"
         "}"
     };
