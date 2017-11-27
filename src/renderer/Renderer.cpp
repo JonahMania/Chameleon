@@ -45,6 +45,11 @@ bool Renderer::makeTexture(Renderable* renderable)
     SDL_Surface* surface;
     GLuint texture;
     SDL_Rect bounds;
+    Uint32 rMask;
+    Uint32 gMask;
+    Uint32 bMask;
+    Uint32 aMask;
+
 
     if(renderable == NULL)
     {
@@ -84,10 +89,36 @@ bool Renderer::makeTexture(Renderable* renderable)
         return false;
     }
 
-    surface = SDL_CreateRGBSurface(0, sprite->getRenderWidth() * sprite->getScale(), sprite->getRenderHeight() * sprite->getScale(), 32, 0, 0, 0, 0);
+    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
+        rMask = 0xff000000;
+        gMask = 0x00ff0000;
+        bMask = 0x0000ff00;
+        aMask = 0x000000ff;
+    #else
+        rMask = 0x000000ff;
+        gMask = 0x0000ff00;
+        bMask = 0x00ff0000;
+        aMask = 0xff000000;
+    #endif
+
+    surface = SDL_CreateRGBSurface(0, sprite->getRenderWidth() * sprite->getScale(), sprite->getRenderHeight() * sprite->getScale(), 32, rMask, gMask, bMask, aMask);
     if(surface == NULL)
     {
         std::cerr<<"Error: Surface is NULL "<<SDL_GetError()<<std::endl;
+        return false;
+    }
+
+    if(SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE) < 0)
+    {
+        std::cerr<<"Error: Could not set surface blend mode "<<SDL_GetError()<<std::endl;
+        SDL_FreeSurface(surface);
+        return false;
+    }
+
+    if(SDL_SetSurfaceBlendMode(imageSurface, SDL_BLENDMODE_NONE) < 0)
+    {
+        std::cerr<<"Error: Could not set surface blend mode "<<SDL_GetError()<<std::endl;
+        SDL_FreeSurface(surface);
         return false;
     }
 
@@ -119,7 +150,7 @@ bool Renderer::makeTexture(Renderable* renderable)
     return true;
 }
 
-bool Renderer::render(Renderable* renderable, Renderable* mask)
+bool Renderer::render(Renderable* renderable, bool isMask)
 {
     Sprite* sprite;
     GLuint texture;
@@ -160,51 +191,20 @@ bool Renderer::render(Renderable* renderable, Renderable* mask)
         return false;
     }
 
-    if(mask != NULL && maskShader.bind())
+    if(basicShader.bind())
     {
-        (void)makeTexture(mask);
-
-        it = textures.find(mask->getId());
-        if(it == textures.end())
-        {
-            return false;
-        }
-        maskTexture = it->second;
-
-        if(maskTexture < 1)
-        {
-            return false;
-        }
-        //Render with mask
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, maskTexture);
-
-        glBegin(GL_QUADS);
-            glTexCoord2f(0, 0); glVertex2f(dest.x, dest.y);
-            glTexCoord2f(1, 0); glVertex2f(dest.x + dest.w, dest.y);
-            glTexCoord2f(1, 1); glVertex2f(dest.x + dest.w, dest.y + dest.h);
-            glTexCoord2f(0, 1); glVertex2f(dest.x, dest.y + dest.h);
-        glEnd();
-
-        maskShader.unbind();
-    }else if(basicShader.bind()){
         //Render without mask
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glBegin(GL_QUADS);
-            glTexCoord2f(0, 0); glVertex2f(dest.x, dest.y);
-            glTexCoord2f(1, 0); glVertex2f(dest.x + dest.w, dest.y);
-            glTexCoord2f(1, 1); glVertex2f(dest.x + dest.w, dest.y + dest.h);
-            glTexCoord2f(0, 1); glVertex2f(dest.x, dest.y + dest.h);
+            glTexCoord2f(0, 0); glVertex3f(dest.x, dest.y, 0);
+            glTexCoord2f(1, 0); glVertex3f(dest.x + dest.w, dest.y, 0);
+            glTexCoord2f(1, 1); glVertex3f(dest.x + dest.w, dest.y + dest.h, 0);
+            glTexCoord2f(0, 1); glVertex3f(dest.x, dest.y + dest.h, 0);
         glEnd();
-
         basicShader.unbind();
     }
-
 }
 
 bool Renderer::clear()

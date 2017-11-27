@@ -80,8 +80,8 @@ bool BasicShader::bind()
 {
     if(Shader::bind())
     {
-        GLuint t1Location = glGetUniformLocation(id, "texture");
-        glUniform1i(t1Location, 0);
+        GLuint textureLocation = glGetUniformLocation(id, "texture");
+        glUniform1i(textureLocation, 0);
         return true;
     }
     return false;

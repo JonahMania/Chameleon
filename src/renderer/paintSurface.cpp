@@ -34,6 +34,7 @@ bool paintSurface(SDL_Surface* surface, Colorable colorable, std::set<SDL_Color>
 {
     std::map<SDL_Color, SDL_Color> colorMap;
     SDL_Color pixelColor;
+    SDL_Color newPixelColor;
 
     colorMap = createColorMap(colorKeys, colorable);
     //Paint surface
@@ -42,7 +43,9 @@ bool paintSurface(SDL_Surface* surface, Colorable colorable, std::set<SDL_Color>
         pixelColor = getPixel(surface, i);
         if(colorMap.find(pixelColor) != colorMap.end())
         {
-            setPixel(surface, i, colorMap.at(pixelColor));
+            newPixelColor = colorMap.at(pixelColor);
+            newPixelColor.a = pixelColor.a;
+            setPixel(surface, i, newPixelColor);
         }
     }
 }

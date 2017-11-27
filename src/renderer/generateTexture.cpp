@@ -22,7 +22,7 @@ GLuint surfaceToTexture(SDL_Surface* surface)
         }else{
             mode = GL_BGRA;
         }
-    }else if (surface->format->BytesPerPixel == 3){
+    }else if(surface->format->BytesPerPixel == 3){
         if(surface->format->Rmask == 0x000000ff)
         {
             mode = GL_RGB;
@@ -31,9 +31,9 @@ GLuint surfaceToTexture(SDL_Surface* surface)
         }
     }else{
         std::cout<<"Error: Cannot get mode for surface "<<std::endl;
+        glDeleteTextures(1, &texture);
         return 0;
     }
-
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, surface->format->BytesPerPixel, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -44,12 +44,12 @@ bool Renderer::initialize()
     //Enable 2d textures
     glEnable(GL_TEXTURE_2D);
 
-    glClearColor(0,0,0,1);
+    glClearColor(0,0,0,0);
 
     //Enable blending
     glEnable(GL_BLEND);
     glDisable(GL_DEPTH_TEST);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Use Vsync
     if(SDL_GL_SetSwapInterval(1) < 0)

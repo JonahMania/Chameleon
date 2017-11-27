@@ -65,7 +65,7 @@ void setPixel(SDL_Surface *surface, int i, SDL_Color color)
     //Bytes per pixel
     int bytesPerPixel = surface->format->BytesPerPixel;
 
-    if( SDL_LockSurface(surface) < 0 )
+    if(SDL_LockSurface(surface) < 0)
     {
         std::cerr<<"Error: Could not lock surface "<<SDL_GetError()<<std::endl;
         return;

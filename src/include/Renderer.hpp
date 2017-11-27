@@ -25,7 +25,7 @@ class Renderer
         Renderer(int w, int h);
         bool initialize();
         bool makeTexture(Renderable* renderable);
-        bool render(Renderable* renderable, Renderable* mask = NULL);
+        bool render(Renderable* renderable, bool isMask = false);
         //Clear the screen to black
         bool clear();
         //Update the latest changes to the screen

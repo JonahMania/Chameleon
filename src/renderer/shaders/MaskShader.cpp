@@ -26,7 +26,7 @@ bool MaskShader::load()
         "void main() {"
             "vec4 color = texture2D(texture, vTexCoord);"
             "vec4 maskColor  = texture2D(mask, vTexCoord);"
-            "gl_FragColor = color;"
+            "gl_FragColor = vec4(color.r * maskColor.r, color.g * maskColor.r, color.b * maskColor.r, maskColor.a);"
         "}"
    };
 
@@ -82,11 +82,11 @@ bool MaskShader::bind()
 {
     if(Shader::bind())
     {
-        GLuint t1Location = glGetUniformLocation(id, "texture");
-        GLuint t2Location = glGetUniformLocation(id, "mask");
+        GLuint textureLocation = glGetUniformLocation(id, "texture");
+        GLuint maskLocation = glGetUniformLocation(id, "mask");
 
-        glUniform1i(t1Location, 0);
-        glUniform1i(t2Location, 1);
+        glUniform1i(textureLocation, 0);
+        glUniform1i(maskLocation, 1);
         return true;
     }
     return false;
