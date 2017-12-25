@@ -6,6 +6,7 @@ Renderable::Renderable()
     renderHeight = 0;
     renderPositionX = 0;
     renderPositionY = 0;
+    layer = 0;
 }
 
 Renderable::Renderable(unsigned int w, unsigned int h)
@@ -14,6 +15,7 @@ Renderable::Renderable(unsigned int w, unsigned int h)
     renderHeight = h;
     renderPositionX = 0;
     renderPositionY = 0;
+    layer = 0;
 }
 
 void Renderable::setDimensions(unsigned int w, unsigned int h)
@@ -26,6 +28,11 @@ void Renderable::setRenderPosition(int x, int y)
 {
     renderPositionX = x;
     renderPositionY = y;
+}
+
+void Renderable::setLayer(unsigned int l)
+{
+    layer = l;
 }
 
 std::string Renderable::getId() const
@@ -52,6 +59,11 @@ int Renderable::getRenderPositionX() const
 int Renderable::getRenderPositionY() const
 {
     return renderPositionY;
+}
+
+unsigned int Renderable::getLayer() const
+{
+    return layer;
 }
 
 Renderable::~Renderable()
