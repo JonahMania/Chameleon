@@ -1,13 +1,20 @@
+#include "../include/Renderer.hpp"
+
 #include "paintSurface.hpp"
 #include "generateTexture.hpp"
 #include "../utils/colorUtils.hpp"
-#include "../include/Renderer.hpp"
 
-Renderer::Renderer(int w, int h)
+
+Renderer::Renderer(int w, int h, unsigned int l)
 {
     width = w;
     height = h;
-    windowRect = {0, 0, width, height};
+    if(l > MAX_LAYERS || l < 1)
+    {
+        l = MAX_LAYERS;
+    }
+    numLayers = l;
+    windowRect = {0, 0, (int)width, (int)height};
 }
 
 SDL_Surface* Renderer::getSurface(std::string path)
@@ -150,13 +157,25 @@ bool Renderer::makeTexture(Renderable* renderable)
     return true;
 }
 
-bool Renderer::render(Renderable* renderable, bool isMask)
+bool Renderer::render(Renderable* renderable)
 {
     Sprite* sprite;
     GLuint texture;
     GLuint maskTexture;
     SDL_Rect dest;
     std::unordered_map<std::string, GLuint>::const_iterator it;
+
+    if(renderable == NULL)
+    {
+        std::cerr<<"Error: Renderable is NULL"<<std::endl;
+        return false;
+    }
+
+    if(renderable->getLayer() > numLayers)
+    {
+        std::cerr<<"Error: Renderable layer greater then max layer: "<<numLayers<<std::endl;
+        return false;
+    }
 
     sprite = dynamic_cast<Sprite*>(renderable);
 
@@ -191,6 +210,10 @@ bool Renderer::render(Renderable* renderable, bool isMask)
         return false;
     }
 
+    glBindFramebuffer(GL_FRAMEBUFFER, layerFrameBuffers[renderable->getLayer()]);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glViewport(0, 0, width, height);
+
     if(basicShader.bind())
     {
         //Render without mask
@@ -198,23 +221,53 @@ bool Renderer::render(Renderable* renderable, bool isMask)
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glBegin(GL_QUADS);
-            glTexCoord2f(0, 0); glVertex3f(dest.x, dest.y, 0);
-            glTexCoord2f(1, 0); glVertex3f(dest.x + dest.w, dest.y, 0);
-            glTexCoord2f(1, 1); glVertex3f(dest.x + dest.w, dest.y + dest.h, 0);
-            glTexCoord2f(0, 1); glVertex3f(dest.x, dest.y + dest.h, 0);
+            glTexCoord2f(0, 0); glVertex2f(dest.x, dest.y);
+            glTexCoord2f(1, 0); glVertex2f(dest.x + dest.w, dest.y);
+            glTexCoord2f(1, 1); glVertex2f(dest.x + dest.w, dest.y + dest.h);
+            glTexCoord2f(0, 1); glVertex2f(dest.x, dest.y + dest.h);
         glEnd();
         basicShader.unbind();
     }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 bool Renderer::clear()
 {
+    for(int i = 0; i < numLayers; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, layerFrameBuffers[i]);
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClear(GL_COLOR_BUFFER_BIT);
+
     return true;
 }
 
 void Renderer::update()
 {
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    for(int i = 0; i < numLayers; i++)
+    {
+        if(basicShader.bind())
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, layerTextures[i]);
+
+            glBegin(GL_QUADS);
+                glTexCoord2f(0, 0); glVertex2f(0, height);
+                glTexCoord2f(1, 0); glVertex2f(width, height);
+                glTexCoord2f(1, 1); glVertex2f(width, 0);
+                glTexCoord2f(0, 1); glVertex2f(0, 0);
+            glEnd();
+            basicShader.unbind();
+        }
+    }
+
     SDL_GL_SwapWindow(window);
 }
 
@@ -233,6 +286,7 @@ bool Renderer::freeAllSurfaces()
 
 bool Renderer::freeAllTextures()
 {
+    //Cached object textures
     for(auto &texture : textures)
     {
         if(texture.second != 0)
@@ -253,6 +307,11 @@ Renderer::~Renderer()
 {
     std::cout<<"FREEING RENDERER"<<std::endl;
     freeAll();
+    //Free render and frame buffers
+    glDeleteTextures(numLayers, layerTextures);
+    glDeleteFramebuffers(numLayers, layerFrameBuffers);
+    delete[] layerTextures;
+    delete[] layerFrameBuffers;
     SDL_DestroyWindow(window);
     maskShader.freeShader();
     basicShader.freeShader();

@@ -9,7 +9,7 @@ GLuint surfaceToTexture(SDL_Surface* surface)
 
     if(texture < 1)
     {
-        std::cout<<"Error: Could not create texture "<<glGetError()<<std::endl;
+        std::cerr<<"Error: Could not create texture "<<glGetError()<<std::endl;
         return 0;
     }
 
@@ -30,7 +30,7 @@ GLuint surfaceToTexture(SDL_Surface* surface)
             mode = GL_BGR;
         }
     }else{
-        std::cout<<"Error: Cannot get mode for surface "<<std::endl;
+        std::cerr<<"Error: Cannot get mode for surface "<<std::endl;
         glDeleteTextures(1, &texture);
         return 0;
     }

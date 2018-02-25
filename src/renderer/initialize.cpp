@@ -44,7 +44,7 @@ bool Renderer::initialize()
     //Enable 2d textures
     glEnable(GL_TEXTURE_2D);
 
-    glClearColor(0,0,0,0);
+    glClearColor(0, 0, 0, 0);
 
     //Enable blending
     glEnable(GL_BLEND);
@@ -73,6 +73,39 @@ bool Renderer::initialize()
     {
         return false;
     }
+
+    //Allocate space for render and frame buffers
+    layerTextures = new GLuint[numLayers];
+    layerFrameBuffers = new GLuint[numLayers];
+    //Create opengl frame and render buffer objects
+    glGenTextures(numLayers, layerTextures);
+    glGenFramebuffers(numLayers, layerFrameBuffers);
+
+
+    for(int i = 0; i < numLayers; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, layerTextures[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, layerFrameBuffers[i]);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, layerTextures[i], 0);
+        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+        if(status != GL_FRAMEBUFFER_COMPLETE)
+        {
+            std::cout<<"Error: Could not create framebuffer "<<glGetError()<<std::endl;
+            glDeleteTextures(numLayers, layerTextures);
+            glDeleteFramebuffers(numLayers, layerFrameBuffers);
+            delete[] layerTextures;
+            delete[] layerFrameBuffers;
+            return false;
+        }
+
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     return true;
 }

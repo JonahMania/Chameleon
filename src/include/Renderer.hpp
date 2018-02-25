@@ -8,6 +8,7 @@
 #include <SDL_opengl.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glext.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -19,13 +20,15 @@
 #include "MaskShader.hpp"
 #include "BasicShader.hpp"
 
+#define MAX_LAYERS 8
+
 class Renderer
 {
     public:
-        Renderer(int w, int h);
+        Renderer(int w, int h, unsigned int l=MAX_LAYERS);
         bool initialize();
         bool makeTexture(Renderable* renderable);
-        bool render(Renderable* renderable, bool isMask = false);
+        bool render(Renderable* renderable);
         //Clear the screen to black
         bool clear();
         //Update the latest changes to the screen
@@ -38,6 +41,7 @@ class Renderer
         //Dimensions of the window
         int width;
         int height;
+        unsigned int numLayers;
         SDL_GLContext context;
         SDL_Window* window;
         SDL_Rect windowRect;
@@ -45,6 +49,10 @@ class Renderer
         std::unordered_map<std::string, std::set<SDL_Color>> colorKeys;
         std::unordered_map<std::string, SDL_Surface*> surfaces;
         std::unordered_map<std::string, GLuint> textures;
+        //Array of frame buffer objects one for each layer
+        GLuint *layerFrameBuffers;
+        //Array of textures to attach to each frame buffer
+        GLuint *layerTextures;
         //Shaders
         BasicShader basicShader;
         MaskShader maskShader;
