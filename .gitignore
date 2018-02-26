@@ -2,3 +2,5 @@
 engine.a
 obj/
 engine/
+demos/colorTest/colorTest
+demos/colorTest/obj/
