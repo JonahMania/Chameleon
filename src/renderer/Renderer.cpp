@@ -227,6 +227,10 @@ bool Renderer::render(Renderable* renderable)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    if(!useRenderCache)
+    {
+        glDeleteTextures(1, &texture);
+    }
 }
 
 bool Renderer::clear()
