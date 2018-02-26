@@ -15,6 +15,7 @@ Renderer::Renderer(int w, int h, unsigned int l)
     }
     numLayers = l;
     windowRect = {0, 0, (int)width, (int)height};
+    useRenderCache = true;
 }
 
 SDL_Surface* Renderer::getSurface(std::string path)
@@ -43,7 +44,7 @@ SDL_Surface* Renderer::getSurface(std::string path)
     return surface;
 }
 
-bool Renderer::makeTexture(Renderable* renderable)
+GLuint Renderer::makeTexture(Renderable* renderable)
 {
     Sprite* sprite;
     Colorable* colorable;
@@ -56,16 +57,16 @@ bool Renderer::makeTexture(Renderable* renderable)
     Uint32 gMask;
     Uint32 bMask;
     Uint32 aMask;
-
+    std::unordered_map<std::string, GLuint>::const_iterator it;
 
     if(renderable == NULL)
     {
-        return false;
+        return -1;
     }
     //If the texture already exists dont remake it
-    if(textures.find(renderable->getId()) != textures.end())
+    if((it = textures.find(renderable->getId())) != textures.end())
     {
-        return true;
+        return it->second;
     }
     //If we have  a shape generate, insert and return
     shape = dynamic_cast<Shape*>(renderable);
@@ -74,10 +75,13 @@ bool Renderer::makeTexture(Renderable* renderable)
         texture = generateShapeTexture(shape);
         if(texture == 0)
         {
-            return false;
+            return -1;
         }
-        textures.insert(std::pair<std::string, GLuint>(shape->getId(), texture));
-        return true;
+        if(useRenderCache)
+        {
+            textures.insert(std::pair<std::string, GLuint>(shape->getId(), texture));
+        }
+        return texture;
     }
 
     //Check if we have a sprite
@@ -85,7 +89,7 @@ bool Renderer::makeTexture(Renderable* renderable)
     //If we don't have at least a sprite we cannot create a texture
     if(sprite == NULL)
     {
-        return false;
+        return -1;
     }
     //Check if we have a colorable or a renderable
     colorable = dynamic_cast<Colorable*>(renderable);
@@ -93,7 +97,7 @@ bool Renderer::makeTexture(Renderable* renderable)
     imageSurface = getSurface(sprite->getPath());
     if(imageSurface == NULL)
     {
-        return false;
+        return -1;
     }
 
     #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -112,21 +116,21 @@ bool Renderer::makeTexture(Renderable* renderable)
     if(surface == NULL)
     {
         std::cerr<<"Error: Surface is NULL "<<SDL_GetError()<<std::endl;
-        return false;
+        return -1;
     }
 
     if(SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE) < 0)
     {
         std::cerr<<"Error: Could not set surface blend mode "<<SDL_GetError()<<std::endl;
         SDL_FreeSurface(surface);
-        return false;
+        return -1;
     }
 
     if(SDL_SetSurfaceBlendMode(imageSurface, SDL_BLENDMODE_NONE) < 0)
     {
         std::cerr<<"Error: Could not set surface blend mode "<<SDL_GetError()<<std::endl;
         SDL_FreeSurface(surface);
-        return false;
+        return -1;
     }
 
     //Find the position of sprite sheet we want to use
@@ -139,7 +143,7 @@ bool Renderer::makeTexture(Renderable* renderable)
     {
         std::cerr<<"Error: Could not blit surface "<<SDL_GetError()<<std::endl;
         SDL_FreeSurface(surface);
-        return false;
+        return -1;
     }
 
     if(colorable)
@@ -148,13 +152,13 @@ bool Renderer::makeTexture(Renderable* renderable)
     }
 
     texture = surfaceToTexture(surface);
-    if(texture > 0)
+    if(texture > 0 && useRenderCache)
     {
         textures.insert(std::pair<std::string, GLuint>(sprite->getId(), texture));
     }
 
     SDL_FreeSurface(surface);
-    return true;
+    return texture;
 }
 
 bool Renderer::render(Renderable* renderable)
@@ -163,7 +167,6 @@ bool Renderer::render(Renderable* renderable)
     GLuint texture;
     GLuint maskTexture;
     SDL_Rect dest;
-    std::unordered_map<std::string, GLuint>::const_iterator it;
 
     if(renderable == NULL)
     {
@@ -196,14 +199,7 @@ bool Renderer::render(Renderable* renderable)
         return false;
     }
 
-    (void)makeTexture(renderable);
-
-    it = textures.find(renderable->getId());
-    if(it == textures.end())
-    {
-        return false;
-    }
-    texture = it->second;
+    texture = makeTexture(renderable);
 
     if(texture < 1)
     {
@@ -269,6 +265,16 @@ void Renderer::update()
     }
 
     SDL_GL_SwapWindow(window);
+}
+
+void Renderer::enableRenderCache()
+{
+    useRenderCache = true;
+}
+
+void Renderer::disableRenderCache()
+{
+    useRenderCache = false;
 }
 
 bool Renderer::freeAllSurfaces()

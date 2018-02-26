@@ -27,12 +27,14 @@ class Renderer
     public:
         Renderer(int w, int h, unsigned int l=MAX_LAYERS);
         bool initialize();
-        bool makeTexture(Renderable* renderable);
+        GLuint makeTexture(Renderable* renderable);
         bool render(Renderable* renderable);
         //Clear the screen to black
         bool clear();
         //Update the latest changes to the screen
         void update();
+        void enableRenderCache();
+        void disableRenderCache();
         bool freeAllSurfaces();
         bool freeAllTextures();
         bool freeAll();
@@ -41,6 +43,8 @@ class Renderer
         //Dimensions of the window
         int width;
         int height;
+        //Flag to tell if textures should be cached or not
+        bool useRenderCache;
         unsigned int numLayers;
         SDL_GLContext context;
         SDL_Window* window;

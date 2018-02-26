@@ -27,7 +27,6 @@ struct colorValues
 void updateScreen(colorValues cv, Colorable* image, Renderer* renderer)
 {
     renderer->clear();
-    renderer->freeAllTextures();
 
     image->setHue(cv.hueBase);
     image->setStep(cv.hueStep);
@@ -60,6 +59,8 @@ int main()
     {
         return -1;
     }
+    //Don't cache textues since we will make a lot and only use them once
+    renderer.disableRenderCache();
 
     Colorable image = Colorable("resources/trophy.png", IMAGE_WIDTH, IMAGE_HEIGHT, 0, 0, SCALE);
 
