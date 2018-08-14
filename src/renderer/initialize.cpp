@@ -81,16 +81,15 @@ bool Renderer::initialize()
     glGenTextures(numLayers, layerTextures);
     glGenFramebuffers(numLayers, layerFrameBuffers);
 
-
     for(int i = 0; i < numLayers; i++)
     {
         glBindTexture(GL_TEXTURE_2D, layerTextures[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,GL_RGBA, GL_UNSIGNED_BYTE, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glBindFramebuffer(GL_FRAMEBUFFER, layerFrameBuffers[i]);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, layerTextures[i], 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, layerTextures[i], 0);
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
         if(status != GL_FRAMEBUFFER_COMPLETE)
